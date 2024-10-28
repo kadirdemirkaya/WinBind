@@ -1,0 +1,6 @@
+@WinBind.Api_HostAddress = http://localhost:5096
+
+GET {{WinBind.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
