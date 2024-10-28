@@ -20,6 +20,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+// test ama en güncel test
 app.MapControllers();
 
 app.Run();
