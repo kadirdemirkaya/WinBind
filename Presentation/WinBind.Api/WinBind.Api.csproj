@@ -10,4 +10,14 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Application\WinBind.Application\WinBind.Application.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\WinBind.Infrastructure\WinBind.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\WinBind.Persistence\WinBind.Persistence.csproj" />
+  </ItemGroup>
+
 </Project>
