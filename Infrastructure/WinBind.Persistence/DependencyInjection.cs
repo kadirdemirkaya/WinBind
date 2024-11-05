@@ -43,6 +43,12 @@ namespace WinBind.Persistence
             }).AddEntityFrameworkStores<WinBindDbContext>()
               .AddDefaultTokenProviders();
 
+            var sp = services.BuildServiceProvider();
+            var context = sp.GetRequiredService<WinBindDbContext>();
+            context.Database.MigrateAsync();
+            context.Database.EnsureCreatedAsync();
+
+
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
             return services;
