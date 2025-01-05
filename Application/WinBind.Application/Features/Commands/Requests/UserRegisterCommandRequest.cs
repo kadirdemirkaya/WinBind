@@ -1,0 +1,17 @@
+﻿using MediatR;
+using WinBind.Domain.Models.Responses;
+using WinBind.Domain.Models.User;
+
+namespace WinBind.Application.Features.Commands.Requests
+{
+    public class UserRegisterCommandRequest : IRequest<ResponseModel<UserRegisterModel>>
+    {
+        public string Name { get; set; }
+
+        public string Email { get; set; }
+
+        public string? PhoneNumber { get; set; }
+
+        public string Password { get; set; }
+    }
+}
