@@ -36,6 +36,8 @@ namespace WinBind.Persistence
                 options.SignIn.RequireConfirmedPhoneNumber = false;
                 options.SignIn.RequireConfirmedAccount = false;
                 options.Password.RequireDigit = false;
+                options.User.AllowedUserNameCharacters = null; 
+                options.User.RequireUniqueEmail = true; 
                 options.Password.RequireLowercase = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
@@ -50,6 +52,8 @@ namespace WinBind.Persistence
 
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+            services.AddScoped<IUserServive, UserService>();
 
             return services;
         }
