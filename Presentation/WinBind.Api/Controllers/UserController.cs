@@ -5,13 +5,20 @@ namespace WinBind.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController(IPaginationService paginationService) : ControllerBase
+    public class UserController : ControllerBase
     {
-        [HttpGet]
-        [Route("pagination-request")]
-        public async Task<IActionResult> PaginationReq()
+        [HttpPost]
+        [Route("user-login")]
+        public async Task<IActionResult> UserLogin()
         {
-            return Ok(paginationService.GetPaginationOptions());
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("user-register")]
+        public async Task<IActionResult> UserRegister()
+        {
+            return Ok();
         }
     }
 }

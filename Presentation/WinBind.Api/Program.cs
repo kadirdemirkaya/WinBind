@@ -8,6 +8,13 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddRouting(opt =>
+{
+    opt.LowercaseUrls = true;
+});
+
+builder.Services.AddCors();
+
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpContextAccessor();
@@ -20,6 +27,11 @@ builder.Services.PersistenceServiceRegistration(builder.Configuration);
 
 
 var app = builder.Build();
+
+app.UseCors(builder =>
+{
+    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+});
 
 app.UseSwagger();
 

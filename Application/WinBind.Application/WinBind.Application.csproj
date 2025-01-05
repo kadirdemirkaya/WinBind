@@ -15,4 +15,11 @@
     <ProjectReference Include="..\..\Domain\WinBind.Domain\WinBind.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Commands\Handlers\" />
+    <Folder Include="Features\Commands\Requests\" />
+    <Folder Include="Features\Queries\Handlers\" />
+    <Folder Include="Features\Queries\Requests\" />
+  </ItemGroup>
+
 </Project>
