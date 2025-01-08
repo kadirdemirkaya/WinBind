@@ -21,6 +21,8 @@ namespace WinBind.Infrastructure
         {
             app.UseMiddleware<PaginationMiddleware>();
 
+            app.UseMiddleware<ErrorHandlingMiddleware>();
+
             return app;
         }
     }
