@@ -70,7 +70,6 @@ namespace WinBind.Api.Controllers
                 return BadRequest(responseModel);
 
             return Ok(responseModel);
-
         }
     }
 }
