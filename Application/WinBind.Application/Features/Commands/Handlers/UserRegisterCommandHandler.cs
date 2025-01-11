@@ -12,6 +12,9 @@ namespace WinBind.Application.Features.Commands.Handlers
         {
             UserRegisterModel result = await _userServive.UserRegisterAsync(request);
 
+            if(result.Errors.Any())
+                return new ResponseModel<UserRegisterModel>(result.Errors, 400);
+
             return new ResponseModel<UserRegisterModel>(result);
         }
     }

@@ -19,7 +19,10 @@ namespace WinBind.Persistence.Services
             if (user is null || user.IsDeleted is true)
                 return new()
                 {
-                    Errors = new string[] { "User Not found" }
+                    Errors = new string[] { "User Not found" },
+                    Role = string.Empty,
+                    Token = string.Empty,
+                    UserModel = new()
                 };
 
             bool result = await _userManager.CheckPasswordAsync(user, userLoginCommand.Password);
@@ -27,7 +30,10 @@ namespace WinBind.Persistence.Services
             if (!result)
                 return new()
                 {
-                    Errors = new string[] { "Invalid user inputs" }
+                    Errors = new string[] { "Invalid user inputs" },
+                    Role = string.Empty,
+                    Token = string.Empty,
+                    UserModel = new()
                 };
 
             IList<string> userRole = await _userManager.GetRolesAsync(user);
@@ -42,10 +48,11 @@ namespace WinBind.Persistence.Services
                     CreatedAtUtc = user.CreatedAtUtc,
                     PhoneNumber = user.PhoneNumber,
                     UserName = user.UserName,
-                    Email = user.Email
+                    Email = user.Email,
                 },
                 Token = token.AccessToken,
                 Role = userRole.FirstOrDefault(),
+                Errors = new string[] { }
             };
         }
 
@@ -56,9 +63,9 @@ namespace WinBind.Persistence.Services
 
             AppUser user = new()
             {
-                Email = userRegisterCommand.Email,
-                PhoneNumber = userRegisterCommand.PhoneNumber,
-                UserName = userRegisterCommand.Name,
+                Email = userRegisterCommand.Email ?? string.Empty,
+                PhoneNumber = userRegisterCommand.PhoneNumber ?? string.Empty,
+                UserName = userRegisterCommand.Name ?? string.Empty,
             };
 
             IdentityResult result = await _userManager.CreateAsync(user, userRegisterCommand.Password);
@@ -86,12 +93,14 @@ namespace WinBind.Persistence.Services
                         IsSuccess = true,
                         Role = role,
                         UserId = user.Id,
-                        Errors = null
+                        Errors = new string[] { }
                     } :
                     new()
                     {
                         IsSuccess = false,
-                        Errors = addToRoleResult.Errors.Select(e => e.Description).ToArray()
+                        Errors = addToRoleResult.Errors.Select(e => e.Description).ToArray(),
+                        UserId = user.Id,
+                        Role = role
                     };
             }
             else

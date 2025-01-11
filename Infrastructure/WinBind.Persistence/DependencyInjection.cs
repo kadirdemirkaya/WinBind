@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using WinBind.Application.Abstractions;
 using WinBind.Application.Extensions;
 using WinBind.Domain.Entities.Identity;
@@ -36,14 +38,19 @@ namespace WinBind.Persistence
                 options.SignIn.RequireConfirmedPhoneNumber = false;
                 options.SignIn.RequireConfirmedAccount = false;
                 options.Password.RequireDigit = false;
-                options.User.AllowedUserNameCharacters = null; 
-                options.User.RequireUniqueEmail = true; 
+                options.User.AllowedUserNameCharacters = null;
+                options.User.RequireUniqueEmail = true;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequiredLength = 3;
             }).AddEntityFrameworkStores<WinBindDbContext>()
               .AddDefaultTokenProviders();
+
+            services.Configure<UserManager<AppUser>>(userManagerOptions =>
+            {
+                userManagerOptions.UserValidators.Clear();
+            });
 
             var sp = services.BuildServiceProvider();
             var context = sp.GetRequiredService<WinBindDbContext>();
@@ -56,6 +63,27 @@ namespace WinBind.Persistence
             services.AddScoped<IUserServive, UserService>();
 
             return services;
+        }
+
+        public static IApplicationBuilder PersistenceApplicationBuilderRegistration(this IApplicationBuilder app)
+        {
+
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+
+                try
+                {
+                    WinBindSeedContext.SeedAsync(services.GetRequiredService<WinBindDbContext>()).GetAwaiter().GetResult();
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<WinBindDbContext>>();
+                    logger.LogError(ex, "An error occurred while seeding the database.");
+                }
+            }
+
+            return app;
         }
     }
 }

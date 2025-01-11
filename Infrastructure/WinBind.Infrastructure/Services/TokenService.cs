@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -29,7 +30,6 @@ namespace WinBind.Infrastructure.Services
                 SecurityAlgorithms.HmacSha256
             );
 
-            //TODO: this place will fixed
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub,Guid.NewGuid().ToString()),
@@ -63,10 +63,10 @@ namespace WinBind.Infrastructure.Services
                 SecurityAlgorithms.HmacSha256
             );
 
-            //TODO: this place will fixed
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub,Guid.NewGuid().ToString()),
+                new Claim("Id", user.Id.ToString()),
                 new Claim("Email",user.Email),
             };
 
@@ -85,6 +85,41 @@ namespace WinBind.Infrastructure.Services
             token.AccessToken = new JwtSecurityTokenHandler().WriteToken(securityToken);
 
             return token;
+        }
+
+        public string GetClaimFromRequest(HttpContext httpContext, string claimType)
+        {
+            var authorizationHeader = httpContext.Request.Headers["Authorization"].ToString();
+
+            if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
+            {
+                throw new UnauthorizedAccessException("Authorization token is missing or invalid.");
+            }
+
+            var token = authorizationHeader.Substring("Bearer ".Length); // "Bearer " kısmını çıkar
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var securityToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
+
+            var claimValue = securityToken.Claims.FirstOrDefault(claim => claim.Type == claimType)?.Value;
+
+            if (claimValue == null)
+            {
+                throw new Exception($"Claim '{claimType}' not found in token.");
+            }
+
+            return claimValue;
+        }
+
+        public string ExtractTokenFromHeader(HttpRequest request)
+        {
+            var authorizationHeader = request.Headers["Authorization"].FirstOrDefault();
+
+            if (authorizationHeader != null && authorizationHeader.StartsWith("Bearer "))
+            {
+                return authorizationHeader.Substring("Bearer ".Length).Trim();
+            }
+
+            return null;
         }
     }
 }

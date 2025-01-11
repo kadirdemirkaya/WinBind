@@ -1,4 +1,6 @@
-﻿using WinBind.Domain.Entities.Base;
+﻿using Microsoft.Identity.Client;
+using WinBind.Domain.Entities.Base;
+using WinBind.Domain.Entities.Identity;
 
 namespace WinBind.Domain.Entities
 {
@@ -10,8 +12,11 @@ namespace WinBind.Domain.Entities
         public string SKU { get; set; }
         public bool IsAvailable { get; set; }
 
+
+        public Guid UserId { get; set; }
         public Guid CategoryId { get; set; }
         public virtual Category Category { get; set; }
+        public virtual AppUser AppUser { get; set; }
         public virtual ICollection<OrderItem> OrderItems { get; set; }
         public virtual ICollection<BasketItem> BasketItems { get; set; }
         public virtual ICollection<Auction> Auctions { get; set; }
