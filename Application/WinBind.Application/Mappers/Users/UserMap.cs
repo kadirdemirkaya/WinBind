@@ -3,7 +3,7 @@ using WinBind.Application.Features.Commands.Requests;
 using WinBind.Domain.Entities.Identity;
 using WinBind.Domain.Models.User;
 
-namespace WinBind.Application.Mappers.User
+namespace WinBind.Application.Mappers.Users
 {
     public class UserMap : Profile
     {
