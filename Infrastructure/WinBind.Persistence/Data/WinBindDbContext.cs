@@ -52,6 +52,12 @@ namespace WinBind.Persistence.Data
                 .WithMany(c => c.Products)
                 .HasForeignKey(p => p.CategoryId);
 
+            modelBuilder.Entity<AppUser>()
+                .HasMany(p => p.Products)
+                .WithOne(pi => pi.AppUser)
+                .HasForeignKey(pi => pi.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             modelBuilder.Entity<Product>()
                .HasMany(p => p.ProductImages)
                .WithOne(pi => pi.Product)
@@ -117,7 +123,7 @@ namespace WinBind.Persistence.Data
             modelBuilder.Entity<BasketItem>()
                 .HasOne(ci => ci.Basket)
                 .WithMany(c => c.BasketItems)
-                .HasForeignKey(ci => ci.CartId);
+                .HasForeignKey(ci => ci.BasketId);
 
             modelBuilder.Entity<BasketItem>()
                 .HasOne(ci => ci.Product)
