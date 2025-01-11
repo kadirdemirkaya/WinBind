@@ -10,6 +10,7 @@ namespace WinBind.Domain.Entities.Identity
         public DateTime? UpdatedAtUtc { get; set; }
         public bool IsDeleted { get; set; } = false;
 
+        public virtual ICollection<Product> Products { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<Basket> Baskets { get; set; }
         public virtual ICollection<Bid> Bids { get; set; }
