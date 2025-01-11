@@ -12,6 +12,9 @@ namespace WinBind.Application.Features.Commands.Handlers
         {
             UserLoginModel result = await _userServive.UserLoginAsync(request);
 
+            if(result.Errors.Any())
+                return new ResponseModel<UserLoginModel>(result.Errors, 400);
+
             return new ResponseModel<UserLoginModel>(result);
         }
     }
