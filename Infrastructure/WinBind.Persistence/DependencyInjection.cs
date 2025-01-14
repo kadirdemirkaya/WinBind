@@ -19,18 +19,7 @@ namespace WinBind.Persistence
         {
             var sqlServerOptions = services.GetOptions<SqlServerOptions>("SqlServerOptions");
 
-            services.AddDbContext<WinBindDbContext>(options =>
-            {
-                options.UseSqlServer(
-                    sqlServerOptions.SqlConnection,
-                    sqlOptions =>
-                    {
-                        sqlOptions.EnableRetryOnFailure(
-                            maxRetryCount: int.Parse(sqlServerOptions.RetryCount),
-                            maxRetryDelay: TimeSpan.FromSeconds(int.Parse(sqlServerOptions.RetryDelay)),
-                            errorNumbersToAdd: null);
-                    });
-            });
+            services.AddDbContext<WinBindDbContext>(opt => opt.UseNpgsql(sqlServerOptions.SqlConnection));
 
             services.AddIdentity<AppUser, AppRole>(options =>
             {
@@ -74,7 +63,7 @@ namespace WinBind.Persistence
 
                 try
                 {
-                    WinBindSeedContext.SeedAsync(services.GetRequiredService<WinBindDbContext>()).GetAwaiter().GetResult();
+                    WinBindSeedContext.SeedAsync(services.GetRequiredService<WinBindDbContext>(), services).GetAwaiter().GetResult();
                 }
                 catch (Exception ex)
                 {
