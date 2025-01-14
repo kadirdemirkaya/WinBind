@@ -1,15 +1,18 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WinBind.Domain.Entities;
+using WinBind.Domain.Entities.Identity;
 
 namespace WinBind.Persistence.Data
 {
     public static class WinBindSeedContext
     {
-        public static async Task SeedAsync(WinBindDbContext context)
+        public static async Task SeedAsync(WinBindDbContext context, IServiceProvider serviceProvider)
         {
             if (context.Categories.Count() == 0)
             {
@@ -58,13 +61,68 @@ namespace WinBind.Persistence.Data
 
                 await context.SaveChangesAsync();
             }
+            if (context.AppRoles.Count() == 0)
+            {
+                var roleManager = serviceProvider.GetRequiredService<RoleManager<AppRole>>();
+
+                if (roleManager.Roles.Count() == 0)
+                {
+                    var roles = new[] { "Admin", "User" };
+
+                    foreach (var role in roles)
+                    {
+                        if (!await roleManager.RoleExistsAsync(role))
+                        {
+                            await roleManager.CreateAsync(new AppRole { Name = role, NormalizedName = role.ToUpper() });
+                        }
+                    }
+                }
+            }
+            if (context.AppUsers.Count() == 0)
+            {
+                UserManager<AppUser> _userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
+
+                AppUser? ahmetUser = await _userManager.FindByIdAsync("A83ADF0D-319C-49C0-AC51-1CA1361A6599");
+                AppUser? ayseUser = await _userManager.FindByIdAsync("0BCC6871-53AC-4B0C-B365-836872181B04");
+
+                if (ahmetUser is null && ayseUser is null)
+                {
+                    var defaultUsers = new List<AppUser>()
+                    {
+                        new()
+                        {
+                            Id = Guid.Parse("A83ADF0D-319C-49C0-AC51-1CA1361A6599"),
+                            UserName = "AhmetCakar",
+                            Email = "AhmetCakar@hotmail.com",
+                            EmailConfirmed = true,
+                        },
+                        new()
+                        {
+                            Id = Guid.Parse("0BCC6871-53AC-4B0C-B365-836872181B04"),
+                            UserName = "AyseUlucan",
+                            Email = "AyseUlucan@gmail.com",
+                            EmailConfirmed = true,
+                        }
+                    };
+
+                    foreach (var defaultUser in defaultUsers)
+                    {
+                        var result = await _userManager.CreateAsync(defaultUser, "User_123");
+                        if (result.Succeeded)
+                        {
+                            await _userManager.AddToRoleAsync(defaultUser, "User");
+                        }
+                    }
+                }
+
+            }
             if (context.Products.Count() == 0)
             {
                 await context.Products.AddAsync(new()
                 {
                     Id = Guid.Parse("95AF7707-98C8-4833-AC99-12DF0B480296"),
                     CategoryId = Guid.Parse("B8ADEF21-797C-4920-8022-B04787F3F49F"),
-                    UserId = Guid.Parse("1278f846-c1e3-465e-df75-08dd2d6b9394"),
+                    UserId = Guid.Parse("A83ADF0D-319C-49C0-AC51-1CA1361A6599"),
                     IsAvailable = true,
                     Name = "Quartz Saat 1",
                     Price = 1000,
@@ -86,7 +144,7 @@ namespace WinBind.Persistence.Data
                 {
                     Id = Guid.Parse("1EA48088-2945-44F9-9BCB-B117B061DAF4"),
                     CategoryId = Guid.Parse("82F24E16-D019-4BD5-957D-81931E643AA9"),
-                    UserId = Guid.Parse("1278f846-c1e3-465e-df75-08dd2d6b9394"),
+                    UserId = Guid.Parse("0BCC6871-53AC-4B0C-B365-836872181B04"),
                     IsAvailable = true,
                     Name = "Askeri Saat 2",
                     Price = 2000,

@@ -7,10 +7,6 @@ namespace WinBind.Persistence.Data
 {
     public class WinBindDbContext : IdentityDbContext<AppUser, AppRole, Guid, AppUserClaim, AppUserRole, AppUserLogin, AppRoleClaim, AppUserToken>
     {
-        public WinBindDbContext()
-        {
-
-        }
         public WinBindDbContext(DbContextOptions<WinBindDbContext> options)
             : base(options)
         {
@@ -30,13 +26,6 @@ namespace WinBind.Persistence.Data
         public DbSet<Basket> Baskets { get; set; }
         public DbSet<BasketItem> BasketItems { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=WinBidDb;Trusted_Connection=True;TrustServerCertificate=True");
-            }
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
