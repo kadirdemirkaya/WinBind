@@ -67,10 +67,22 @@ namespace WinBind.Api.Controllers
         {
             ResponseModel<bool> responseModel = await _mediator.Send(new DeleteCategoryByIdCommandRequest(categoryId));
 
-            if (responseModel.Success is true)
+            if (responseModel.Success is false)
                 return BadRequest(responseModel);
 
             return Ok(responseModel);
+        }
+
+        [HttpGet("get-category-list")]
+        public async Task<IActionResult> GetCategoryList()
+        {
+            GetAllCategoriesQueryRequest request = new();
+            var response = await _mediator.Send(request);
+
+            if (response.Success is false)
+                return BadRequest(response);
+
+            return Ok(response);
         }
     }
 }

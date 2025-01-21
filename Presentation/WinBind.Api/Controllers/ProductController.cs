@@ -44,19 +44,16 @@ namespace WinBind.Api.Controllers
             return Ok(response);
         }
 
-        //[HttpGet("get-product-list")]
-        //public async Task<IActionResult> GetProductList()
-        //{
-        //    if (productId is null)
-        //        productId = Guid.Parse(_tokenService.GetClaimFromRequest(_httpContextAccessor.HttpContext, "Id"));
+        [HttpGet("get-product-list")]
+        public async Task<IActionResult> GetProductList([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            var response = await _mediator.Send(new GetAllProductsQueryRequest(page,pageSize));
 
-        //    var response = await _mediator.Send(new GetProductByIdQueryRequest((Guid)productId));
+            if (response.Success is false)
+                return NotFound(response);
 
-        //    if (response.Success is false)
-        //        return NotFound(response);
-
-        //    return Ok(response);
-        //}
+            return Ok(response);
+        }
 
 
 
@@ -91,6 +88,17 @@ namespace WinBind.Api.Controllers
                 return BadRequest(responseModel);
 
             return Ok(responseModel);
+        }
+
+        [HttpGet("get-filtered-and-sorted-products")]
+        public async Task<IActionResult> GetFilteredAndSortedProducts([FromQuery] GetFilteredAndSortedProductsQueryRequest request)
+        {
+            var response = await _mediator.Send(request);
+
+            if (response.Success is false)
+                return BadRequest(response);
+
+            return Ok(response);
         }
     }
 }

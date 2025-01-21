@@ -24,7 +24,7 @@ namespace WinBind.Application.Features.Commands.Handlers
 
         public async Task<ResponseModel<bool>> Handle(UpdateCategoryCommandRequest request, CancellationToken cancellationToken)
         {
-            var category = await _repository.GetAsync(c => c.Id == request.Id);
+            var category = await _repository.GetAsync(c => c.Id == request.Id,false);
             if (category == null)
                 return new ResponseModel<bool>("Product is not found", 404);
 

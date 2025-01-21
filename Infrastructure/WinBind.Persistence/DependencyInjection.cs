@@ -9,6 +9,7 @@ using WinBind.Application.Extensions;
 using WinBind.Domain.Entities.Identity;
 using WinBind.Domain.Models.Options;
 using WinBind.Persistence.Data;
+using WinBind.Persistence.Repositories;
 using WinBind.Persistence.Services;
 
 namespace WinBind.Persistence
@@ -48,8 +49,10 @@ namespace WinBind.Persistence
 
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<IProductRepository, ProductRepository>();
 
             services.AddScoped<IUserServive, UserService>();
+            services.AddScoped<IProductService, ProductService>();
 
             return services;
         }
