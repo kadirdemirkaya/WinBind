@@ -27,18 +27,18 @@ namespace WinBind.Application.Features.Commands.Handlers
             bool addResponse = await _repository.AddAsync(new Product()
             {
                 Id = Guid.NewGuid(),
-                Name = request.ProductDto.Name,
-                Description = request.ProductDto.Description,
-                Price = request.ProductDto.Price,
-                SKU = request.ProductDto.SKU,
-                IsAvailable = request.ProductDto.IsAvailable,
-                UserId = request.ProductDto.UserId,
-                CategoryId = request.ProductDto.CategoryId,
-                ProductImages = request.ProductImagesDto.Select(imageDto => new ProductImage
+                Name = request.Name,
+                Description = request.Description,
+                Price = request.Price,
+                SKU = request.SKU,
+                IsAvailable = request.IsAvailable,
+                UserId = request.UserId,
+                CategoryId = request.CategoryId,
+                ProductImages = request.ProductImages.Select(imageDto => new ProductImage
                 {
                     Id = Guid.NewGuid(),
                     Path = imageDto.Path,
-                    ProductId = imageDto.ProductId,
+                    //ProductId = imageDto.ProductId,
                     CreatedAtUtc = DateTime.UtcNow,
                     IsDeleted = false,
                 }).ToList()

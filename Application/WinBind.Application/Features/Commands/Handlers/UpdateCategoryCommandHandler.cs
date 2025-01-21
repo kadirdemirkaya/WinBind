@@ -16,14 +16,10 @@ namespace WinBind.Application.Features.Commands.Handlers
     {
         private readonly IRepository<Category> _repository;
         private readonly IMapper _mapper;
-        public UpdateCategoryCommandHandler(IMapper mapper)
-        {
-            _mapper = mapper;
-        }
-
-        public UpdateCategoryCommandHandler(IRepository<Category> repository)
+        public UpdateCategoryCommandHandler(IRepository<Category> repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
         public async Task<ResponseModel<bool>> Handle(UpdateCategoryCommandRequest request, CancellationToken cancellationToken)

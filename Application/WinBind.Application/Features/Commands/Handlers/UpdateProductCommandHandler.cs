@@ -24,13 +24,13 @@ namespace WinBind.Application.Features.Commands.Handlers
 
         public async Task<ResponseModel<bool>> Handle(UpdateProductCommandRequest request, CancellationToken cancellationToken)
         {
-            var product = await _repository.GetAsync(p => p.Id == request.ProductDto.Id);
+            var product = await _repository.GetAsync(p => p.Id == request.ProductDto.Id,false);
 
             if (product == null)
                 return new ResponseModel<bool>("Product is not found", 404);
 
-            var mappedProduct = _mapper.Map<Product>(request);
-            var updateStatus = _repository.Update(mappedProduct);
+            product = _mapper.Map<Product>(request.ProductDto);
+            var updateStatus = _repository.Update(product);
 
             if (updateStatus is false)
                 return new ResponseModel<bool>("Update failed", 400);

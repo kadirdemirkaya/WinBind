@@ -87,7 +87,7 @@ namespace WinBind.Api.Controllers
         {
             ResponseModel<bool> responseModel = await _mediator.Send(new DeleteProductByIdCommandRequest(productId));
 
-            if (responseModel.Success is true)
+            if (responseModel.Success is false)
                 return BadRequest(responseModel);
 
             return Ok(responseModel);

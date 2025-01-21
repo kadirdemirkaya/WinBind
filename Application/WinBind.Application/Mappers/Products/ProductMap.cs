@@ -8,6 +8,7 @@ using WinBind.Application.Features.Commands.Requests;
 using WinBind.Domain.Entities;
 using WinBind.Domain.Entities.Identity;
 using WinBind.Domain.Models.Product;
+using WinBind.Domain.Models.ProductImage;
 
 namespace WinBind.Application.Mappers.Products
 {
@@ -19,7 +20,20 @@ namespace WinBind.Application.Mappers.Products
                 .ForMember(p => p.ProductImages, opt => opt.MapFrom(src => src.ProductImages))
                 .ReverseMap();
 
-            CreateMap<Product, UpdateProductCommandRequest>().ReverseMap();
+            CreateMap<ProductDto, Product>()
+                .ForMember(p => p.ProductImages, opt => opt.MapFrom(src => src.ProductImages))
+                .ReverseMap();
+
+
+            //CreateMap<Product, UpdateProductCommandRequest>()
+            //    .ForMember(p => p.ProductDto.ProductImages, opt => opt.MapFrom(src => src.ProductImages))
+            //    .ReverseMap();
+
+            //CreateMap<Product, ProductDto>()                
+            //    .ReverseMap();
+
+            CreateMap<ProductImage, ProductImageDto>()
+                .ReverseMap();
 
         }
     }
