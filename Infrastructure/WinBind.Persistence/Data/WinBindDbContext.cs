@@ -18,7 +18,6 @@ namespace WinBind.Persistence.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Auction> Auctions { get; set; }
         public DbSet<AuctionResult> AuctionResults { get; set; }
@@ -77,16 +76,6 @@ namespace WinBind.Persistence.Data
                 .HasOne(c => c.AppUser)
                 .WithMany(u => u.Baskets)
                 .HasForeignKey(c => c.UserId);
-
-            modelBuilder.Entity<OrderItem>()
-                .HasOne(oi => oi.Order)
-                .WithMany(o => o.OrderItems)
-                .HasForeignKey(oi => oi.OrderId);
-
-            modelBuilder.Entity<OrderItem>()
-                .HasOne(oi => oi.Product)
-                .WithMany(p => p.OrderItems)
-                .HasForeignKey(oi => oi.ProductId);
 
             modelBuilder.Entity<Payment>()
                 .HasOne(p => p.Order)

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WinBind.Persistence.Data;
@@ -11,9 +12,11 @@ using WinBind.Persistence.Data;
 namespace WinBind.Persistence.Migrations
 {
     [DbContext(typeof(WinBindDbContext))]
-    partial class WinBindDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250121113501_orderitem_removed")]
+    partial class orderitem_removed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -440,9 +443,6 @@ namespace WinBind.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("BasketId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
@@ -466,8 +466,6 @@ namespace WinBind.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BasketId");
 
                     b.HasIndex("UserId");
 
@@ -718,12 +716,6 @@ namespace WinBind.Persistence.Migrations
 
             modelBuilder.Entity("WinBind.Domain.Entities.Order", b =>
                 {
-                    b.HasOne("WinBind.Domain.Entities.Basket", "Basket")
-                        .WithMany()
-                        .HasForeignKey("BasketId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("WinBind.Domain.Entities.Identity.AppUser", "AppUser")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
@@ -731,8 +723,6 @@ namespace WinBind.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("AppUser");
-
-                    b.Navigation("Basket");
                 });
 
             modelBuilder.Entity("WinBind.Domain.Entities.Payment", b =>

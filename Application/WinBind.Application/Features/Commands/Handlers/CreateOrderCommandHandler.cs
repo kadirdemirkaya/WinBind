@@ -40,9 +40,9 @@ namespace WinBind.Application.Features.Commands.Handlers
                     {
                         OrderDate = DateTime.UtcNow,
                         TotalAmount = totalAmount,
-                        OrderItems = null,
                         UserId = request.CreateOrderDto.UserId ?? Guid.Empty,
                         Status = "Order",
+                        BasketId = basket.Id
                     };
 
                     await _orderRepository.AddAsync(order);
