@@ -13,7 +13,7 @@ namespace WinBind.Application.Features.Queries.Handlers
         {
             AppUser? appUser = await _userManager.FindByIdAsync(request.Id.ToString());
 
-            if (appUser == null)
+            if (appUser == null || appUser.IsDeleted == true)
                 return new ResponseModel<UserModel>("User not found", 404);
 
             var userModel = new UserModel
