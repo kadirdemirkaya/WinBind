@@ -26,6 +26,7 @@ namespace WinBind.Api.Controllers
             _tokenService = tokenService;
         }
 
+        [AllowAnonymous]
         [HttpGet("get-category-by-id")]
         public async Task<IActionResult> GetCategoryById(Guid? categoryId)
         {
@@ -73,6 +74,7 @@ namespace WinBind.Api.Controllers
             return Ok(responseModel);
         }
 
+        [AllowAnonymous]
         [HttpGet("get-category-list")]
         public async Task<IActionResult> GetCategoryList()
         {
