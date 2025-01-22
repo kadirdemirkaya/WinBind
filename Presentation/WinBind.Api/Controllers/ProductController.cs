@@ -13,8 +13,7 @@ using WinBind.Domain.Models.User;
 
 namespace WinBind.Api.Controllers
 {
-    [Authorize]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
     [Route("api/[controller]")]
     [ApiController]
     public class ProductController : ControllerBase
@@ -56,7 +55,8 @@ namespace WinBind.Api.Controllers
         }
 
 
-
+        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("create-product")]
         public async Task<IActionResult> CreateProduct([FromBody] CreateProductCommandRequest request)
         {
@@ -68,6 +68,8 @@ namespace WinBind.Api.Controllers
             return Ok(response);
         }
 
+        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPut("update-product")]
         public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductCommandRequest request)
         {
@@ -79,6 +81,8 @@ namespace WinBind.Api.Controllers
             return Ok(response);
         }
 
+        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpDelete("delete-product-by-id")]
         public async Task<IActionResult> DeleteProductById([FromHeader] Guid productId)
         {
