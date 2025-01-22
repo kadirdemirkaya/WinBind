@@ -26,7 +26,10 @@ namespace WinBind.Application.Features.Queries.Handlers
 
         async Task<ResponseModel<List<ProductDto>>> IRequestHandler<GetAllProductsQueryRequest, ResponseModel<List<ProductDto>>>.Handle(GetAllProductsQueryRequest request, CancellationToken cancellationToken)
         {
-            var productList = await _repository.GetAllAsync(default, false, p => p.ProductImages);
+            var productList = await _repository.GetAllAsync(p => p.IsAvailable == true && p.IsDeleted == false, false, p => p.ProductImages);
+
+            if (productList == null)
+                return new ResponseModel<List<ProductDto>>("Products are not found", 404);
 
             int skip = (request.Page - 1) * request.PageSize;
             int take = request.PageSize;
