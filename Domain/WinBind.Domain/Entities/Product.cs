@@ -13,11 +13,12 @@ namespace WinBind.Domain.Entities
         public string Brand { get; set; }
         public string Model { get; set; }
         public string CaseColor { get; set; }
-        public string CaseShape { get; set; }  
-        public string BandColor { get; set; }  
-        public string DialColor { get; set; }  
+        public string CaseShape { get; set; }
+        public string BandColor { get; set; }
+        public string DialColor { get; set; }
         public string Gender { get; set; }
         public string Technology { get; set; }
+        public int StockCount { get; set; }
         public bool IsAvailable { get; set; }
 
 

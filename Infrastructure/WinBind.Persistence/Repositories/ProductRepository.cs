@@ -21,25 +21,30 @@ namespace WinBind.Persistence.Repositories
 
         public async Task<List<Product>> GetFilteredAndSortedProductsAsync(GetFilteredAndSortedProductsQueryRequest request)
         {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+
             var query = _context.Products.AsQueryable();
 
-            if (request.Brand != null)
+            if (!string.IsNullOrEmpty(request.Brand))
                 query = query.Where(p => p.Brand == request.Brand);
 
-            if (request.CaseColor != null)
+            if (!string.IsNullOrEmpty(request.CaseColor))
                 query = query.Where(p => p.CaseColor == request.CaseColor);
 
-            if (request.BandColor != null)
+            if (!string.IsNullOrEmpty(request.BandColor))
                 query = query.Where(p => p.BandColor == request.BandColor);
 
-            if (request.SortOrder.ToLower() == "asc")
-                query = query.OrderBy(p => p.Price);
+            if (!string.IsNullOrEmpty(request.SortOrder))
+            {
+                if (request.SortOrder.ToLower() == "asc")
+                    query = query.OrderBy(p => p.Price);
 
-            if (request.SortOrder.ToLower() == "desc")
-                query = query.OrderByDescending(p => p.Price);
+                if (request.SortOrder.ToLower() == "desc")
+                    query = query.OrderByDescending(p => p.Price);
+            }
 
-            var result = await query.ToListAsync();
-            return result;
+            return await query.ToListAsync();
         }
     }
 }

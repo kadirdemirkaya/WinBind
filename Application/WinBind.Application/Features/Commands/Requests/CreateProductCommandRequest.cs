@@ -25,6 +25,7 @@ namespace WinBind.Application.Features.Commands.Requests
         public string Gender { get; set; }
         public string Technology { get; set; }
         public bool IsAvailable { get; set; }
+        public int StockCount { get; set; }
         public List<CreateProductImageDto> ProductImages { get; set; }
 
         public Guid UserId { get; set; }

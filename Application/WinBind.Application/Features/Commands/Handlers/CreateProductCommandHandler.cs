@@ -42,6 +42,7 @@ namespace WinBind.Application.Features.Commands.Handlers
                 IsAvailable = request.IsAvailable,
                 UserId = request.UserId,
                 CategoryId = request.CategoryId,
+                StockCount = request.StockCount,
                 ProductImages = request.ProductImages.Select(imageDto => new ProductImage
                 {
                     Id = Guid.NewGuid(),
