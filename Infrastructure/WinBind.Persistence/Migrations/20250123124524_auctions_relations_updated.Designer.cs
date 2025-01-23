@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WinBind.Persistence.Data;
@@ -11,9 +12,11 @@ using WinBind.Persistence.Data;
 namespace WinBind.Persistence.Migrations
 {
     [DbContext(typeof(WinBindDbContext))]
-    partial class WinBindDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250123124524_auctions_relations_updated")]
+    partial class auctions_relations_updated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

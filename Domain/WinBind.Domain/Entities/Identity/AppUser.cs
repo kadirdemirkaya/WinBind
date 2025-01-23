@@ -14,5 +14,6 @@ namespace WinBind.Domain.Entities.Identity
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<Basket> Baskets { get; set; }
         public virtual ICollection<Bid> Bids { get; set; }
+        public virtual ICollection<Auction> Auctions { get; set; }
     }
 }

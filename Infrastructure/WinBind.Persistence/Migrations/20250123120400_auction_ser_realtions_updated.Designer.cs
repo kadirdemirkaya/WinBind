@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WinBind.Persistence.Data;
@@ -11,9 +12,11 @@ using WinBind.Persistence.Data;
 namespace WinBind.Persistence.Migrations
 {
     [DbContext(typeof(WinBindDbContext))]
-    partial class WinBindDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250123120400_auction_ser_realtions_updated")]
+    partial class auction_ser_realtions_updated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,7 +31,7 @@ namespace WinBind.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AppUserId")
+                    b.Property<Guid>("AuctionAppUserId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAtUtc")
@@ -39,6 +42,12 @@ namespace WinBind.Persistence.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
+
+                    b.Property<decimal>("LastPrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<Guid>("OfferAppUserId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
@@ -52,12 +61,11 @@ namespace WinBind.Persistence.Migrations
                     b.Property<DateTime?>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("AppUserId");
+                    b.HasIndex("AuctionAppUserId");
+
+                    b.HasIndex("OfferAppUserId");
 
                     b.HasIndex("ProductId");
 
@@ -631,9 +639,15 @@ namespace WinBind.Persistence.Migrations
 
             modelBuilder.Entity("WinBind.Domain.Entities.Auction", b =>
                 {
-                    b.HasOne("WinBind.Domain.Entities.Identity.AppUser", "AppUser")
-                        .WithMany("Auctions")
-                        .HasForeignKey("AppUserId")
+                    b.HasOne("WinBind.Domain.Entities.Identity.AppUser", "AuctionAppUser")
+                        .WithMany("AuctionAppUser")
+                        .HasForeignKey("AuctionAppUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("WinBind.Domain.Entities.Identity.AppUser", "OfferAppUser")
+                        .WithMany("OfferAppUser")
+                        .HasForeignKey("OfferAppUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -643,7 +657,9 @@ namespace WinBind.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("AppUser");
+                    b.Navigation("AuctionAppUser");
+
+                    b.Navigation("OfferAppUser");
 
                     b.Navigation("Product");
                 });
@@ -847,11 +863,13 @@ namespace WinBind.Persistence.Migrations
 
             modelBuilder.Entity("WinBind.Domain.Entities.Identity.AppUser", b =>
                 {
-                    b.Navigation("Auctions");
+                    b.Navigation("AuctionAppUser");
 
                     b.Navigation("Baskets");
 
                     b.Navigation("Bids");
+
+                    b.Navigation("OfferAppUser");
 
                     b.Navigation("Orders");
 
