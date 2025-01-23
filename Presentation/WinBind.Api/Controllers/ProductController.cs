@@ -94,6 +94,9 @@ namespace WinBind.Api.Controllers
             return Ok(responseModel);
         }
 
+        /// <summary>
+        /// sortOrder kullanılacak ise "asc" veya "desc" yazılması gerek yani descending veya ascending
+        /// </summary>        
         [HttpGet("get-filtered-and-sorted-products")]
         public async Task<IActionResult> GetFilteredAndSortedProducts([FromQuery] GetFilteredAndSortedProductsQueryRequest request)
         {

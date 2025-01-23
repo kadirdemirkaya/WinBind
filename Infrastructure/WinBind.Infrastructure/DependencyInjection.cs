@@ -16,7 +16,7 @@ namespace WinBind.Infrastructure
         public static IServiceCollection InfrastructureServiceRegistration(this IServiceCollection services)
         {
             services.AddScoped<ITokenService, TokenService>();
-
+            services.AddScoped<IPaymentService, IyzicoPaymentService>();
             services.AddScoped<IPaginationService, PaginationService>();
 
             JwtOptions jwtOptions = services.GetOptions<JwtOptions>("JwtOptions");
