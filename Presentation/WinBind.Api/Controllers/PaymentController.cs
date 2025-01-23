@@ -52,7 +52,24 @@ namespace WinBind.Api.Controllers
             var result = await _mediator.Send(command);
 
             if (result.PaymentStatus == "SUCCESS")
-                return Ok(result);
+            {
+                var createPaymentCommand = new CreatePaymentCommandRequest
+                {
+                    PaymentId = result.PaymentId,
+                    OrderId = Guid.Parse(result.OrderId),
+                    Amount = decimal.Parse(result.Amount),
+                    PaymentDate = result.PaymentDate,
+                    PaymentMethod = result.PaymentMethod
+                };
+
+                var createPaymentResult = await _mediator.Send(createPaymentCommand);
+
+                return Ok(new
+                {
+                    Payment = result,
+                    CreatePayment = createPaymentResult
+                });
+            }
 
             return BadRequest(new
             {
