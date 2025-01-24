@@ -36,7 +36,19 @@ namespace WinBind.Application.Features.Queries.Handlers
                     ProductId = basketItem.ProductId,
                     UserId = request.UserId ?? Guid.Empty,   
                     ProductName = basketItem.Product?.Name,  
-                    Quantity = basketItem.Quantity
+                    Quantity = basketItem.Quantity,
+                    BandColor = basketItem.Product?.BandColor,
+                    Brand = basketItem.Product?.Brand,
+                    CaseColor = basketItem.Product?.CaseColor,
+                    CaseShape = basketItem.Product?.CaseShape,
+                    CategoryId = basketItem.Product?.CategoryId ?? Guid.Empty,
+                    CategoryName = basketItem.Product?.Category?.Name,
+                    Description = basketItem.Product?.Description,
+                    DialColor = basketItem.Product?.DialColor,
+                    Gender = basketItem.Product?.Gender,
+                    Model = basketItem.Product?.Model,
+                    SKU = basketItem.Product?.SKU,
+                    Technology = basketItem.Product?.Technology
                 }).ToList() ?? new List<OrderDetailModel>();
 
                 getAllOrderModel.Add(new GetAllOrderModel
