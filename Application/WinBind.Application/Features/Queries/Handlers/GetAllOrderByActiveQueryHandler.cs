@@ -48,7 +48,8 @@ namespace WinBind.Application.Features.Queries.Handlers
                     Gender = basketItem.Product?.Gender,
                     Model = basketItem.Product?.Model,
                     SKU = basketItem.Product?.SKU,
-                    Technology = basketItem.Product?.Technology
+                    Technology = basketItem.Product?.Technology,
+                    Price = basketItem.Product.Price,
                 }).ToList() ?? new List<OrderDetailModel>();
 
                 getAllOrderModel.Add(new GetAllOrderModel
