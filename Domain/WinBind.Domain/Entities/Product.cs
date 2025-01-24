@@ -20,6 +20,7 @@ namespace WinBind.Domain.Entities
         public string Technology { get; set; }
         public int StockCount { get; set; }
         public bool IsAvailable { get; set; }
+        public bool IsAuctionProduct { get; set; } = false;
 
 
         public Guid UserId { get; set; }

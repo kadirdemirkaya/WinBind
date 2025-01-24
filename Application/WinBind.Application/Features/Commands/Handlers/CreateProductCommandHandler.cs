@@ -43,6 +43,7 @@ namespace WinBind.Application.Features.Commands.Handlers
                 UserId = request.UserId,
                 CategoryId = request.CategoryId,
                 StockCount = request.StockCount,
+                IsAuctionProduct = false,
                 ProductImages = request.ProductImages.Select(imageDto => new ProductImage
                 {
                     Id = Guid.NewGuid(),

@@ -26,7 +26,7 @@ namespace WinBind.Application.Features.Queries.Handlers
 
         public async Task<ResponseModel<ProductDto>> Handle(GetProductByIdQueryRequest request, CancellationToken cancellationToken)
         {
-            var product = await _repository.GetAsync(p => p.Id == request.Id, false, p => p.ProductImages);
+            var product = await _repository.GetAsync(p => p.Id == request.Id && p.IsAuctionProduct == false, false, p => p.ProductImages);
 
             if (product == null)
                 return new ResponseModel<ProductDto>("Product is not found.", 404);

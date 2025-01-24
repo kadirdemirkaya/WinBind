@@ -30,6 +30,7 @@ namespace WinBind.Application.Features.Commands.Handlers
                 {
                     decimal totalAmount = 0;
                     int i = 0;
+
                     foreach (var basketItemDto in request.CreateOrderDto.CreateBasketItemDtos)
                     {
                         Product product = await _productRepository.GetAsync(p => p.Id == basketItemDto.ProductId && p.IsDeleted == false);
@@ -38,9 +39,20 @@ namespace WinBind.Application.Features.Commands.Handlers
 
                         if (i == 0)
                         {
-                            product.StockCount -= basketItemDto.Quantity;
-                            _productRepository.Update(product);
-                            await _productRepository.SaveChangesAsync();
+                            if (product.StockCount > basketItemDto.Quantity)
+                            {
+                                product.StockCount -= basketItemDto.Quantity;
+                                _productRepository.Update(product);
+                                await _productRepository.SaveChangesAsync();
+                            }
+                            else
+                            {
+                                return new ResponseModel<CreateOrderModel>(new CreateOrderModel()
+                                {
+                                    IsSuccess = false,
+                                    OrderId = Guid.Empty
+                                });
+                            }
 
                             i += 1;
                         }
@@ -68,7 +80,6 @@ namespace WinBind.Application.Features.Commands.Handlers
                 }
                 return new ResponseModel<CreateOrderModel>("A error occured while order created", 400);
             }
-
             return new ResponseModel<CreateOrderModel>("already exists active basket", 400);
         }
     }

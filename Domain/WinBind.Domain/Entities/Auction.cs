@@ -11,6 +11,7 @@ namespace WinBind.Domain.Entities
         public DateTime EndDate { get; set; }
         public decimal StartingPrice { get; set; }
         public int Count { get; set; }
+        public bool IsActive { get; set; }
 
         public virtual AppUser AppUser { get; set; }
         public virtual Product Product { get; set; }
