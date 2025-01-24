@@ -7,5 +7,6 @@
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public decimal StartingPrice { get; set; }
+        public int Count { get; set; }
     }
 }

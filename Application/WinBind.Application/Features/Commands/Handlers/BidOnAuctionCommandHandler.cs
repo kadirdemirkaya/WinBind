@@ -12,7 +12,7 @@ namespace WinBind.Application.Features.Commands.Handlers
         {
             Bid? bid = (await _bidRepo.GetAllAsync(b => b.AuctionId == request.BidOnAuctionDto.AuctionId && b.IsDeleted == false)).OrderByDescending(b => b.BidAmount).FirstOrDefault();
 
-            if (bid is null) // teklif var
+            if (bid is not null) // teklif var
             {
                 if (bid.BidAmount < request.BidOnAuctionDto.BidAmount)
                 {
@@ -32,12 +32,12 @@ namespace WinBind.Application.Features.Commands.Handlers
 
                             return new ResponseModel<bool>(true);
                         }
-                    
+
                     return new ResponseModel<bool>("Bid could not be created", 400);
                 }
-                return new ResponseModel<bool>("Bid amount under a previous bid amount",400);
+                return new ResponseModel<bool>("Bid amount under a previous bid amount", 400);
             }
-            else 
+            else
             {
                 Bid newBid = new()
                 {

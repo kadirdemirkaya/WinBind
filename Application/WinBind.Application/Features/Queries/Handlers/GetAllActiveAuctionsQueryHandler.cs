@@ -19,7 +19,7 @@ namespace WinBind.Application.Features.Queries.Handlers
                 StartDate = a.StartDate,
                 ProductId = a.ProductId,
                 StartingPrice = a.StartingPrice,
-                UserId = a.UserId
+                UserId = a.AppUserId
             }).OrderBy(a => a.StartDate).ToList();
 
             return new ResponseModel<List<ActiveAuctionModel>>(activeAuctions);

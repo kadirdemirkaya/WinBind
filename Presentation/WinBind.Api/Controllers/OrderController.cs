@@ -75,9 +75,6 @@ namespace WinBind.Api.Controllers
             GetAllOrdersQueryRequest getAllOrdersQueryRequest = new(userId, page, pageSize);
             ResponseModel<List<GetAllOrderModel>> responseModel = await _mediator.Send(getAllOrdersQueryRequest);
 
-            if (responseModel.Success is false)
-                return BadRequest(responseModel);
-
             return Ok(responseModel);
         }
 
@@ -98,9 +95,6 @@ namespace WinBind.Api.Controllers
 
             GetAllOrderByActiveQueryRequest getAllOrderByActiveQueryRequest = new(userId, page, pageSize, isDeleted);
             ResponseModel<List<GetAllOrderModel>> responseModel = await _mediator.Send(getAllOrderByActiveQueryRequest);
-
-            if (responseModel.Data.Count() == 0)
-                return NotFound(responseModel);
 
             return Ok(responseModel);
         }

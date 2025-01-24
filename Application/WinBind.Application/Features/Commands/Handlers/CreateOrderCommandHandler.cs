@@ -29,11 +29,21 @@ namespace WinBind.Application.Features.Commands.Handlers
                 if (saveResponse)
                 {
                     decimal totalAmount = 0;
+                    int i = 0;
                     foreach (var basketItemDto in request.CreateOrderDto.CreateBasketItemDtos)
                     {
                         Product product = await _productRepository.GetAsync(p => p.Id == basketItemDto.ProductId && p.IsDeleted == false);
 
                         totalAmount += product.Price * basketItemDto.Quantity;
+
+                        if (i == 0)
+                        {
+                            product.StockCount -= basketItemDto.Quantity;
+                            _productRepository.Update(product);
+                            await _productRepository.SaveChangesAsync();
+
+                            i += 1;
+                        }
                     }
 
                     Order order = new()
@@ -54,7 +64,7 @@ namespace WinBind.Application.Features.Commands.Handlers
                         OrderId = order.Id
                     };
 
-                    return saveResponse is true ?  new ResponseModel<CreateOrderModel>(createOrderModel) : new ResponseModel<CreateOrderModel>("Order could not be created", 400);
+                    return saveResponse is true ? new ResponseModel<CreateOrderModel>(createOrderModel) : new ResponseModel<CreateOrderModel>("Order could not be created", 400);
                 }
                 return new ResponseModel<CreateOrderModel>("A error occured while order created", 400);
             }

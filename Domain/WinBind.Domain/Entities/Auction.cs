@@ -5,11 +5,12 @@ namespace WinBind.Domain.Entities
 {
     public class Auction : BaseEntity
     {
-        public Guid UserId { get; set; }
+        public Guid AppUserId { get; set; }
         public Guid ProductId { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public decimal StartingPrice { get; set; }
+        public int Count { get; set; }
 
         public virtual AppUser AppUser { get; set; }
         public virtual Product Product { get; set; }
