@@ -2,11 +2,12 @@
 using WinBind.Application.Abstractions;
 using WinBind.Application.Features.Commands.Requests;
 using WinBind.Domain.Entities;
+using WinBind.Domain.Models.Bid;
 using WinBind.Domain.Models.Responses;
 
 namespace WinBind.Application.Features.Commands.Handlers
 {
-    public class BidOnAuctionCommandHandler(IRepository<Bid> _bidRepo) : IRequestHandler<BidOnAuctionCommandRequest, ResponseModel<bool>>
+    public class BidOnAuctionCommandHandler(IRepository<Bid> _bidRepo, IAuctionService _auctionService) : IRequestHandler<BidOnAuctionCommandRequest, ResponseModel<bool>>
     {
         public async Task<ResponseModel<bool>> Handle(BidOnAuctionCommandRequest request, CancellationToken cancellationToken)
         {
@@ -28,7 +29,14 @@ namespace WinBind.Application.Features.Commands.Handlers
                     if (await _bidRepo.AddAsync(newBid))
                         if (await _bidRepo.SaveChangesAsync())
                         {
-                            // Burada web socket'e o anki müzayedenin son amount'unu göndermeliyiz
+                            BidOnAuctionModel bidOnAuctionModel = new()
+                            {
+                                AuctionId = request.BidOnAuctionDto.AuctionId,
+                                BidAmount = request.BidOnAuctionDto.BidAmount,
+                                UserId = request.BidOnAuctionDto.UserId,
+                            };
+
+                            await _auctionService.SendLastBidAtAuctionAsync(bidOnAuctionModel);
 
                             return new ResponseModel<bool>(true);
                         }
@@ -51,7 +59,14 @@ namespace WinBind.Application.Features.Commands.Handlers
                 if (await _bidRepo.AddAsync(newBid))
                     if (await _bidRepo.SaveChangesAsync())
                     {
-                        // Burada web socket'e o anki müzayedenin son amount'unu göndermeliyiz
+                        BidOnAuctionModel bidOnAuctionModel = new()
+                        {
+                            AuctionId = request.BidOnAuctionDto.AuctionId,
+                            BidAmount = request.BidOnAuctionDto.BidAmount,
+                            UserId = request.BidOnAuctionDto.UserId,
+                        };
+
+                        await _auctionService.SendLastBidAtAuctionAsync(bidOnAuctionModel);
 
                         return new ResponseModel<bool>(true);
                     }

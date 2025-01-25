@@ -1,5 +1,6 @@
 ﻿using WinBind.Domain.Entities.Base;
 using WinBind.Domain.Entities.Identity;
+using WinBind.Domain.Enums;
 
 namespace WinBind.Domain.Entities
 {
@@ -10,8 +11,8 @@ namespace WinBind.Domain.Entities
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public decimal StartingPrice { get; set; }
-        public int Count { get; set; }
-        public bool IsActive { get; set; }
+        public int Count { get; set; } = 1;
+        public AuctionStatus AuctionStatus { get; set; } = AuctionStatus.NotStart;
 
         public virtual AppUser AppUser { get; set; }
         public virtual Product Product { get; set; }

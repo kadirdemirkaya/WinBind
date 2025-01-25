@@ -2,6 +2,7 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using WinBind.Application;
 using WinBind.Infrastructure;
+using WinBind.Infrastructure.Hubs;
 using WinBind.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -77,9 +78,16 @@ app.InfrastructureApplicationBuilder();
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseEndpoints(endpoint =>
+{
+    endpoint.MapHub<AuctionHub>("/auctionHub");
+});
 
 app.MapControllers();
 

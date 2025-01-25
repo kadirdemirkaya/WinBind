@@ -10,6 +10,7 @@ namespace WinBind.Domain.Entities
         public decimal FinalPrice { get; set; }
         public DateTime ClosedAt { get; set; }
 
+
         public virtual Auction Auction { get; set; }
         public virtual Bid WinningBidDetails { get; set; }
     }

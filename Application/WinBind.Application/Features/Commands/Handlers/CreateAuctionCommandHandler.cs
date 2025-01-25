@@ -10,42 +10,68 @@ using WinBind.Domain.Models.Responses;
 
 namespace WinBind.Application.Features.Commands.Handlers
 {
-    public class CreateAuctionCommandHandler(IRepository<Auction> _repository, UserManager<AppUser> _userManager) : IRequestHandler<CreateAuctionCommandRequest, ResponseModel<bool>>
+    public class CreateAuctionCommandHandler(IRepository<Auction> _auctionRepo, IRepository<Product> _productRepo, UserManager<AppUser> _userManager) : IRequestHandler<CreateAuctionCommandRequest, ResponseModel<bool>>
     {
         public async Task<ResponseModel<bool>> Handle(CreateAuctionCommandRequest request, CancellationToken cancellationToken)
         {
-            bool existAuction = await _repository.AnyAsync(a => a.ProductId == request.CreateAuctionDto.ProductId && a.IsDeleted == false, false);
-
-            if (existAuction is false)
+            Product product = new()
             {
-                AppUser? appUser = await _userManager.Users.Where(u => u.Id == request.CreateAuctionDto.UserId).FirstOrDefaultAsync();
-
-                Auction newAuction = new Auction()
+                Id = Guid.NewGuid(),
+                BandColor = request.CreateAuctionDto.BandColor,
+                CaseColor = request.CreateAuctionDto.CaseColor,
+                CaseShape = request.CreateAuctionDto.CaseShape,
+                DialColor = request.CreateAuctionDto.DialColor,
+                Description = request.CreateAuctionDto.Description,
+                Gender = request.CreateAuctionDto.Gender,
+                IsAuctionProduct = true,
+                IsDeleted = false,
+                Model = request.CreateAuctionDto.Model,
+                Name = request.CreateAuctionDto.Name,
+                Price = request.CreateAuctionDto.Price,
+                SKU = request.CreateAuctionDto.SKU,
+                Technology = request.CreateAuctionDto.Technology,
+                UserId = request.CreateAuctionDto.UserId ?? Guid.Empty,
+                CategoryId = request.CreateAuctionDto.CategoryId,
+                Brand = request.CreateAuctionDto.Brand,
+                StockCount = request.CreateAuctionDto.StockCount,
+                CreatedAtUtc = DateTime.UtcNow,
+                ProductImages = request.CreateAuctionDto.ProductImages.Select(imageDto => new ProductImage
                 {
                     Id = Guid.NewGuid(),
-                    Count = request.CreateAuctionDto.Count,
-                    ProductId = request.CreateAuctionDto.ProductId,
+                    Path = imageDto.Path,
                     CreatedAtUtc = DateTime.UtcNow,
-                    StartDate = request.CreateAuctionDto.StartDate,
-                    EndDate = request.CreateAuctionDto.EndDate,
-                    AppUserId = request.CreateAuctionDto.UserId ?? Guid.Empty,
-                    StartingPrice = request.CreateAuctionDto.StartingPrice,
-                };
+                    IsDeleted = false,
+                }).ToList(),
+                IsAvailable = true,
+            };
 
-                await _repository.AddAsync(newAuction);
-
-                bool saveResponse = await _repository.SaveChangesAsync();
-
-                if (saveResponse)
+            if (await _productRepo.AddAsync(product))
+            {
+                if (await _productRepo.SaveChangesAsync())
                 {
-                    // Bu kısımda tüm aktif müzayedeleri web sockete aktarmamız lazım.
+                    Auction auction = new()
+                    {
+                        Id = Guid.NewGuid(),
+                        AppUserId = request.CreateAuctionDto.UserId ?? Guid.Empty,
+                        Count = request.CreateAuctionDto.StockCount,
+                        StartDate = request.CreateAuctionDto.StartDate,
+                        EndDate = request.CreateAuctionDto.EndDate,
+                        ProductId = product.Id,
+                        CreatedAtUtc = DateTime.UtcNow,
+                        IsDeleted = false,
+                        AuctionStatus = Domain.Enums.AuctionStatus.NotStart,
+                        StartingPrice = request.CreateAuctionDto.StartingPrice,
+                    };
 
-                    return new ResponseModel<bool>(true, 200);
+                    if (await _auctionRepo.AddAsync(auction))
+                        if (await _auctionRepo.SaveChangesAsync())
+                            return new ResponseModel<bool>(true);
+                        else
+                            return new ResponseModel<bool>("Auction could not be created", 400);
                 }
-
-                return saveResponse is true ? new ResponseModel<bool>(true, 200) : new ResponseModel<bool>("Auction could not be created", 400);
+                return new ResponseModel<bool>("Product not created for auction", 400);
             }
-            return new ResponseModel<bool>("Auction already exists", 400);
+            return new ResponseModel<bool>("Product not added for auction", 400);
         }
     }
 }
