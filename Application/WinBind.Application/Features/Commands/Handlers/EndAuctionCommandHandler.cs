@@ -10,11 +10,12 @@ namespace WinBind.Application.Features.Commands.Handlers
     {
         public async Task<ResponseModel<bool>> Handle(EndAuctionCommandRequest request, CancellationToken cancellationToken)
         {
-            Auction? auction = await _auctionRepo.GetAsync(a => a.Id == request.AuctionId && a.IsDeleted == false);
+            // Bu kısım da auction sonlandırıldığında kazanan teklif için 
+            Auction? auction = await _auctionRepo.GetAsync(a => a.Id == request.AuctionId && a.IsDeleted == false && a.AuctionStatus == Domain.Enums.AuctionStatus.Continues);
 
             if (auction is not null) // aktif müzayede
             {
-                auction.IsDeleted = true;
+                auction.AuctionStatus = Domain.Enums.AuctionStatus.End;
 
                 if (_auctionRepo.Update(auction))
                 {
@@ -43,57 +44,8 @@ namespace WinBind.Application.Features.Commands.Handlers
 
                         if (await _auctionResultRepo.AddAsync(auctionResult))
                             if (await _auctionResultRepo.SaveChangesAsync()) // kişinin sepetine ekle
-                            {
-                                Basket? activeBasket = await _basketRepo.GetAsync(b => b.UserId == highestBid.UserId && b.IsDeleted == false, true, b => b.BasketItems);
+                                return new ResponseModel<bool>(true);
 
-                                if (activeBasket is not null)
-                                {
-                                    BasketItem basketItem = new()
-                                    {
-                                        BasketId = activeBasket.Id,
-                                        AddedAt = DateTime.UtcNow,
-                                        ProductId = auction.ProductId,
-                                        Quantity = auction.Count,
-                                        CreatedAtUtc = DateTime.UtcNow,
-                                        IsDeleted = false,
-                                    };
-
-                                    activeBasket.BasketItems.Add(basketItem);
-                                    if (await _basketRepo.SaveChangesAsync())
-                                        return new ResponseModel<bool>(true);
-
-                                    return new ResponseModel<bool>("auctions not created", 400);
-                                }
-                                else
-                                {
-                                    Basket basket = new()
-                                    {
-                                        UserId = highestBid.UserId,
-                                        CreatedAtUtc = DateTime.UtcNow,
-                                        IsDeleted = false,
-                                    };
-                                    BasketItem basketItem = new()
-                                    {
-                                        BasketId = basket.Id,
-                                        AddedAt = DateTime.UtcNow,
-                                        ProductId = auction.ProductId,
-                                        Quantity = auction.Count,
-                                        CreatedAtUtc = DateTime.UtcNow,
-                                        IsDeleted = false,
-                                    };
-                                    basket.BasketItems.Add(basketItem);
-
-                                    if (await _basketRepo.AddAsync(basket))
-                                        if (await _basketRepo.SaveChangesAsync())
-                                            return new ResponseModel<bool>(true);
-
-                                    return new ResponseModel<bool>("auctions not created", 400);
-                                }
-
-                                //
-                                // Bu kısımda web sockette tüm müzayedeleri göndermemiz gerekiyor.
-                                //
-                            }
                         return new ResponseModel<bool>("AuctionResult got error while created", 400);
                     }
                 }

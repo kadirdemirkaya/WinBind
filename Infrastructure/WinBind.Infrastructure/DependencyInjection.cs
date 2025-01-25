@@ -6,8 +6,10 @@ using System.Text;
 using WinBind.Application.Abstractions;
 using WinBind.Application.Extensions;
 using WinBind.Domain.Models.Options;
+using WinBind.Infrastructure.Hubs;
 using WinBind.Infrastructure.Middlewares;
 using WinBind.Infrastructure.Services;
+using WinBind.Infrastructure.Services.Background;
 
 namespace WinBind.Infrastructure
 {
@@ -15,9 +17,16 @@ namespace WinBind.Infrastructure
     {
         public static IServiceCollection InfrastructureServiceRegistration(this IServiceCollection services)
         {
+            services.AddSignalR();
+
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPaymentService, IyzicoPaymentService>();
             services.AddScoped<IPaginationService, PaginationService>();
+
+            services.AddScoped<IAuctionService, AuctionService>();
+            services.AddScoped<AuctionHub>();
+
+            services.AddHostedService<AuctionBackgroundService>();
 
             JwtOptions jwtOptions = services.GetOptions<JwtOptions>("JwtOptions");
 
