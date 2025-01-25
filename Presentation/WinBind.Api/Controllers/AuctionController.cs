@@ -90,5 +90,16 @@ namespace WinBind.Api.Controllers
 
             return Ok(responseModel);
         }
+
+        [HttpGet("get-auctions-by-userId")]
+        public async Task<IActionResult> GetAuctionsByUserId([FromHeader] GetAuctionsByUserQueryRequest request)
+        {
+            var response = await _mediator.Send(new GetAuctionsByUserQueryRequest(request.Id));
+
+            if (response.Success is false)
+                return BadRequest(response);
+
+            return Ok(response);
+        }
     }
 }
