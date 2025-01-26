@@ -12,5 +12,6 @@ namespace WinBind.Domain.Models.Auction
         public DateTime AuctionStartDate { get; set; }
         public DateTime AuctionEndDate { get; set; }
         public bool IsUserWinner { get; set; }
+        public bool IsOrderPay { get; set; }
     }
 }

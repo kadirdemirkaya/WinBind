@@ -9,7 +9,7 @@ using WinBind.Domain.Models.Responses;
 
 namespace WinBind.Application.Features.Queries.Handlers
 {
-    public class GetUserAuctionsIfBidOnAuctionQueryHandler(IRepository<Auction> _auctionRepo, IMapper _mapper) : IRequestHandler<GetUserAuctionsIfBidOnAuctionQueryRequest, ResponseModel<List<GetAuctionIfBidOnAuctionModel>>>
+    public class GetUserAuctionsIfBidOnAuctionQueryHandler(IRepository<Auction> _auctionRepo, IRepository<Order> _orderRepo, IMapper _mapper) : IRequestHandler<GetUserAuctionsIfBidOnAuctionQueryRequest, ResponseModel<List<GetAuctionIfBidOnAuctionModel>>>
     {
         public async Task<ResponseModel<List<GetAuctionIfBidOnAuctionModel>>> Handle(GetUserAuctionsIfBidOnAuctionQueryRequest request, CancellationToken cancellationToken)
         {
@@ -31,6 +31,16 @@ namespace WinBind.Application.Features.Queries.Handlers
             {
                 bool isWinningBid = a.AuctionResult?.WinningBidDetails?.UserId == request.UserId;
 
+                Order? order = _orderRepo.GetAsync(
+                    o => o.UserId == request.UserId &&
+                    o.Basket.BasketItems.Any(bi => bi.ProductId == a.ProductId) &&
+                    o.Payments.Any(p => p.OrderId != null),
+                    false,
+                    o => o.Basket,
+                    o => o.Basket.BasketItems,
+                    o => o.Payments
+                    ).GetAwaiter().GetResult();
+
                 return new GetAuctionIfBidOnAuctionModel
                 {
                     AuctionId = a.Id,
@@ -40,12 +50,12 @@ namespace WinBind.Application.Features.Queries.Handlers
                     StartingPrice = a.StartingPrice,
                     ProductDto = _mapper.Map<ProductDto>(a.Product),
                     AuctionEnded = a.EndDate < DateTime.UtcNow,
-                    IsUserWinner = isWinningBid
+                    IsUserWinner = isWinningBid,
+                    IsOrderPay = (order is not null)
                 };
             }).OrderBy(a => a.AuctionEndDate).ToList();
 
             return new ResponseModel<List<GetAuctionIfBidOnAuctionModel>>(auctionModels);
-
         }
     }
 }
