@@ -11,10 +11,10 @@ namespace WinBind.Application.Features.Queries.Requests
 {
     public class GetAuctionsByUserQueryRequest : IRequest<ResponseModel<List<GetAuctionsByUserIdDto>>>
     { 
-        public Guid Id { get; set; }
-        public GetAuctionsByUserQueryRequest(Guid ıd)
+        public Guid UserId { get; set; }
+        public GetAuctionsByUserQueryRequest(Guid userId)
         {
-            Id = ıd;
+            UserId = userId;
         }
     }
 }
