@@ -44,18 +44,19 @@ namespace WinBind.Api.Controllers
         /// </summary>
         /// <param name="auctionId"></param>
         /// <returns></returns>
-        [HttpPost]
-        [Route("end-auction")]
-        public async Task<IActionResult> EndAuction([FromHeader] Guid auctionId)
-        {
-            EndAuctionCommandRequest endAuctionCommandRequest = new(auctionId);
-            ResponseModel<bool> responseModel = await _mediator.Send(endAuctionCommandRequest);
+        //[HttpPost]
+        //[Route("end-auction")]
+        //public async Task<IActionResult> EndAuction([FromHeader] Guid auctionId)
+        //{
+        //    EndAuctionCommandRequest endAuctionCommandRequest = new(auctionId);
+        //    ResponseModel<bool> responseModel = await _mediator.Send(endAuctionCommandRequest);
 
-            if (responseModel.Success is false)
-                return BadRequest(responseModel);
+        //    if (responseModel.Success is false)
+        //        return BadRequest(responseModel);
 
-            return Ok(responseModel);
-        }
+        //    return Ok(responseModel);
+        //}
+
 
         /// <summary>
         /// UserId'li kişi AuctionId'li müzayedeye vereceği teklif

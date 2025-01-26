@@ -60,13 +60,22 @@ builder.Services.InfrastructureServiceRegistration();
 
 builder.Services.PersistenceServiceRegistration(builder.Configuration);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowOrigin",
+        builder =>
+        {
+            builder.AllowAnyHeader()
+                           .AllowAnyMethod()
+                           .AllowAnyHeader()
+                           .SetIsOriginAllowed(_ => true)
+                           .AllowCredentials();
+        });
+});
 
 var app = builder.Build();
 
-app.UseCors(builder =>
-{
-    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-});
+app.UseCors("AllowOrigin");
 
 app.UseSwagger();
 
