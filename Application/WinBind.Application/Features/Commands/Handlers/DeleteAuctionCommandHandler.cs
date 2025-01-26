@@ -18,8 +18,11 @@ namespace WinBind.Application.Features.Commands.Handlers
                 auction.IsDeleted = true;
                 auction.UpdatedAtUtc = DateTime.UtcNow;
                 auction.Product.IsDeleted = true;
-                auction.AuctionResult.IsDeleted = true;
-                auction.Bids.ToList().ForEach(b => b.IsDeleted = true);
+
+                if (auction.AuctionResult is not null)
+                    auction.AuctionResult.IsDeleted = true;
+                if (auction.Bids is not null)
+                    auction.Bids.ToList().ForEach(b => b.IsDeleted = true);
 
                 if (_auctionRepo.Update(auction))
                     if (await _auctionRepo.SaveChangesAsync())
