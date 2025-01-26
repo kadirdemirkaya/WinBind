@@ -27,7 +27,9 @@ namespace WinBind.Application.Features.Queries.Handlers
         public async Task<ResponseModel<List<GetAuctionsByUserIdDto>>> Handle(GetAuctionsByUserQueryRequest request, CancellationToken cancellationToken)
         {
             var userAuctions = await _repository.GetAllAsync(
-                a => a.AppUserId == request.UserId,
+                a => a.AppUserId == request.UserId && 
+                a.IsDeleted == false && 
+                a.Product.IsDeleted == false,
                 false,
                 a => a.Product,
                 a => a.Product.ProductImages,

@@ -12,7 +12,13 @@ namespace WinBind.Application.Features.Queries.Handlers
     {
         public async Task<ResponseModel<List<ActiveAuctionModel>>> Handle(GetAllActiveAuctionsQueryRequest request, CancellationToken cancellationToken)
         {
-            List<Auction> auctions = await _repository.GetAllAsync(a => a.IsDeleted == false && a.Product.IsAuctionProduct == true && a.AuctionStatus == Domain.Enums.AuctionStatus.Continues, false, a => a.Product, p => p.Product.ProductImages);
+            List<Auction> auctions = await _repository.GetAllAsync(
+                a => a.IsDeleted == false &&
+                a.Product.IsAuctionProduct == true && 
+                a.AuctionStatus == Domain.Enums.AuctionStatus.Continues, 
+                false, 
+                a => a.Product, 
+                p => p.Product.ProductImages);
 
             List<ActiveAuctionModel> activeAuctions = auctions.Select(a => new ActiveAuctionModel
             {
