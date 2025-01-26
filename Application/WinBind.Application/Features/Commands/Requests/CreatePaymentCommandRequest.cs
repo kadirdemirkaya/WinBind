@@ -12,7 +12,7 @@ namespace WinBind.Application.Features.Commands.Requests
     public class CreatePaymentCommandRequest : IRequest<ResponseModel<bool>>
     {
         [Required]
-        public string PaymentId { get; set; }   // Iyzico payment servisinde paymentId önceden üretiliyor
+        public Guid PaymentId { get; set; }   // Iyzico payment servisinde paymentId önceden üretiliyor
         [Required]
         public Guid OrderId { get; set; }
         [Required]

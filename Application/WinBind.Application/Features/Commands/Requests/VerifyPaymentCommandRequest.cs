@@ -12,7 +12,7 @@ namespace WinBind.Application.Features.Commands.Requests
     public class VerifyPaymentCommandRequest : IRequest<VerifyPaymentResponseDto>
     {
         [Required]
-        public string OrderId { get; set; }
+        public Guid OrderId { get; set; }
         [Required]
         public string IyzicoToken { get; set; }
     }

@@ -8,8 +8,8 @@ namespace WinBind.Domain.Models.Payment
 {
     public class VerifyPaymentResponseDto
     {
-        public string PaymentId { get; set; }
-        public string OrderId { get; set; }
+        public Guid PaymentId { get; set; }
+        public Guid OrderId { get; set; }
         public DateTime PaymentDate { get; set; }
         public string Amount { get; set; }
         public string PaymentMethod { get; set; }

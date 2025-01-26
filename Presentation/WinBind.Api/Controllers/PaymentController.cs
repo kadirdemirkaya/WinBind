@@ -56,7 +56,7 @@ namespace WinBind.Api.Controllers
                 var createPaymentCommand = new CreatePaymentCommandRequest
                 {
                     PaymentId = result.PaymentId,
-                    OrderId = Guid.Parse(result.OrderId),
+                    OrderId = result.OrderId,
                     Amount = decimal.Parse(result.Amount),
                     PaymentDate = result.PaymentDate,
                     PaymentMethod = result.PaymentMethod

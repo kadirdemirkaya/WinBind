@@ -32,7 +32,7 @@ namespace WinBind.Application.Features.Commands.Handlers
 
             var addResponse = await _repository.AddAsync(new Payment
             {
-                Id = Guid.Parse(request.PaymentId),
+                Id = request.PaymentId,
                 OrderId = request.OrderId,
                 Amount = request.Amount,
                 PaymentDate = request.PaymentDate,
