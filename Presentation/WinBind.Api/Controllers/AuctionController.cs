@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Azure;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -91,15 +92,48 @@ namespace WinBind.Api.Controllers
             return Ok(responseModel);
         }
 
+        /// <summary>
+        /// Burası kullanıcının oluşturduğu müzayedeleri listeleme
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpGet("get-auctions-by-userId")]
-        public async Task<IActionResult> GetAuctionsByUserId([FromHeader] GetAuctionsByUserQueryRequest request)
+        public async Task<IActionResult> GetAuctionsByUserId([FromHeader] Guid userId)
         {
-            var response = await _mediator.Send(new GetAuctionsByUserQueryRequest(request.Id));
+            var response = await _mediator.Send(new GetAuctionsByUserQueryRequest(userId));
 
             if (response.Success is false)
                 return BadRequest(response);
 
             return Ok(response);
+        }
+
+        /// <summary>
+        /// Kullanıcının katıldığı ve teklif verdiği müzayedeleri vermekte
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-user-auctions-if-bid-on-auction")]
+        public async Task<IActionResult> GetUserAuctionsIfBidOnAuction([FromHeader] Guid userId)
+        {
+            GetUserAuctionsIfBidOnAuctionQueryRequest getUserAuctionsIfBidOnAuctionQuery = new(userId);
+            ResponseModel<List<GetAuctionIfBidOnAuctionModel>> responseModel = await _mediator.Send(getUserAuctionsIfBidOnAuctionQuery);
+
+            return Ok(responseModel);
+        }
+
+        [HttpDelete]
+        [Route("delete-auction")]
+        public async Task<IActionResult> DeleteAuction([FromHeader]Guid auctionId)
+        {
+            DeleteAuctionCommandRequest deleteAuctionCommandRequest = new(auctionId);
+            ResponseModel<bool> responseModel = await _mediator.Send(deleteAuctionCommandRequest);
+
+            if (responseModel.Success is false)
+                return BadRequest(responseModel);
+
+            return Ok(responseModel);
         }
     }
 }
