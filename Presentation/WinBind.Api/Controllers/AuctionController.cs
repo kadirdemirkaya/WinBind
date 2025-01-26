@@ -123,6 +123,11 @@ namespace WinBind.Api.Controllers
             return Ok(responseModel);
         }
 
+        /// <summary>
+        /// müzayedeyi ve ona ait ürünü siler
+        /// </summary>
+        /// <param name="auctionId"></param>
+        /// <returns></returns>
         [HttpDelete]
         [Route("delete-auction")]
         public async Task<IActionResult> DeleteAuction([FromHeader]Guid auctionId)
