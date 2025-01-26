@@ -20,6 +20,7 @@ namespace WinBind.Application.Features.Queries.Handlers
                 false,
                 a => a.Bids,
                 a => a.Product,
+                a => a.Product.ProductImages,
                 a => a.AuctionResult,
                 a => a.AuctionResult.WinningBidDetails);
 

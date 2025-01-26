@@ -30,6 +30,7 @@ namespace WinBind.Application.Features.Queries.Handlers
                 a => a.AppUserId == request.UserId,
                 false,
                 a => a.Product,
+                a => a.Product.ProductImages,
                 a => a.AuctionResult,
                 a => a.Bids,
                 a => a.AuctionResult.WinningBidDetails);
