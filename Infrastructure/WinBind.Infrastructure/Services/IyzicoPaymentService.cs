@@ -87,7 +87,7 @@ namespace WinBind.Infrastructure.Services
                     PaymentGroup = PaymentGroup.PRODUCT.ToString(),  // Ürün satın alımı için yapılan ödeme.
                     EnabledInstallments = new List<int> { 1 },      // Taksitsiz işlem
                     CallbackUrl = "http://localhost:5173/tez-frontend/verify-payment",  // Callback URL		
-                                                                                        //ForceThreeDS = 1,		
+                                                                                          //ForceThreeDS = 1,		
                     PaymentSource = "123123",
                     PosOrderId = "asdasd13",
                 };

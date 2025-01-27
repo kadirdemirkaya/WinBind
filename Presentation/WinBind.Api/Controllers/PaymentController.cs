@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WinBind.Application.Features.Commands.Requests;
+using WinBind.Domain.Models.Responses;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace WinBind.Api.Controllers
@@ -25,20 +26,30 @@ namespace WinBind.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if(command == null)
+            if (command == null)
                 return NotFound();
 
             var result = await _mediator.Send(command);
 
             if (result.IsSuccess)
-                return Ok(result);
-
-            return BadRequest(new
             {
-                message = "Hata!",
-                error = result.Message
-            });
+                var createPaymentCommand2 = new CreatePaymentCommandRequest
+                {
+                    PaymentId = Guid.NewGuid(),
+                    OrderId = Guid.Parse(command.OrderId),
+                    Amount = command.Price,
+                    PaymentDate = DateTime.UtcNow,
+                    PaymentMethod = "Credit Card",
+                };
+
+                var createPaymentResult2 = await _mediator.Send(createPaymentCommand2);
+
+                return Ok(result);
+            }
+            return BadRequest();
         }
+
+
 
         /// <summary>
         /// istek atarken iyzico token lazım. Response da ise tüm payment bilgileri döner. Ve payment create edilir.
