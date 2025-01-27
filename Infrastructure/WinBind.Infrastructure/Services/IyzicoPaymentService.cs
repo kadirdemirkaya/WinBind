@@ -136,7 +136,8 @@ namespace WinBind.Infrastructure.Services
                     // Ödeme başarılı
                     return new VerifyPaymentResponseDto
                     {
-                        PaymentId = Guid.Parse(checkoutForm.Result.PaymentId),
+                        //PaymentId = Guid.Parse(checkoutForm.Result.PaymentId),
+                        PaymentId = Guid.NewGuid(),
                         OrderId = request.OrderId,
                         PaymentStatus = checkoutForm.Result.PaymentStatus,
                         Amount = checkoutForm.Result.PaidPrice,
@@ -150,7 +151,8 @@ namespace WinBind.Infrastructure.Services
                     // Ödeme başarısız
                     return new VerifyPaymentResponseDto
                     {
-                        PaymentId = Guid.Parse(checkoutForm.Result.PaymentId),
+                        //PaymentId = Guid.Parse(checkoutForm.Result.PaymentId),
+                        PaymentId = Guid.NewGuid(),
                         OrderId = request.OrderId,
                         PaymentStatus = checkoutForm.Result.PaymentStatus,
                         Amount = checkoutForm.Result.PaidPrice,

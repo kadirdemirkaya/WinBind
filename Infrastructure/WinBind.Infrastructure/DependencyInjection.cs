@@ -56,7 +56,7 @@ namespace WinBind.Infrastructure
             var smtpOptions = new SmtpOptions();
             configuration.GetSection("SmtpOptions").Bind(smtpOptions);
             services.AddSingleton(smtpOptions);
-            
+
             return services;
         }
 
