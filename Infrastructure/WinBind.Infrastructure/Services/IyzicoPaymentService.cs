@@ -159,8 +159,6 @@ namespace WinBind.Infrastructure.Services
                         PaymentDate = DateTime.Now,
                         PaymentMethod = "Credit Card",
                         ErrorMessage = checkoutForm.Result.ErrorMessage
-
-
                     };
                 }
             }
