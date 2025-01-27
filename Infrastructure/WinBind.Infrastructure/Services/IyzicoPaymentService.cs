@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Threading.Tasks;
 using WinBind.Application.Abstractions;
@@ -29,34 +30,35 @@ namespace WinBind.Infrastructure.Services
 
         public async Task<InitializePaymentResponseDto> ProcessPaymentAsync(InitializePaymentCommandRequest request)
         {
-
-            // Alıcı (buyer) bilgileri
-            var buyer = new Buyer
+            try
             {
-                Id = request.BuyerId,
-                Name = request.BuyerName,
-                Surname = request.BuyerSurname,
-                Email = request.BuyerEmail,
-                GsmNumber = request.BuyerGsmNumber,
-                IdentityNumber = "11111111111",
-                Ip = "11111111111",
-                //Ip = "85.34.78.112",
-                RegistrationAddress = "ADRES",
-                City = "ADRES",
-                Country = "ADRES",
-                ZipCode = "ADRES"
-            };
+                // Alıcı (buyer) bilgileri
+                var buyer = new Buyer
+                {
+                    Id = request.BuyerId,
+                    Name = request.BuyerName,
+                    Surname = request.BuyerSurname,
+                    Email = request.BuyerEmail,
+                    GsmNumber = request.BuyerGsmNumber,
+                    IdentityNumber = "11111111111",
+                    Ip = "11111111111",
+                    //Ip = "85.34.78.112",
+                    RegistrationAddress = "ADRES",
+                    City = "ADRES",
+                    Country = "ADRES",
+                    ZipCode = "ADRES"
+                };
 
-            var address = new Iyzipay.Model.Address
-            {
-                ContactName = buyer.Name + "" + buyer.Surname,
-                ZipCode = "ADRES",
-                Country = "ADRES",
-                City = "ADRES",
-                Description = "DESCRIPTION",
-            };
+                var address = new Iyzipay.Model.Address
+                {
+                    ContactName = buyer.Name + "" + buyer.Surname,
+                    ZipCode = "ADRES",
+                    Country = "ADRES",
+                    City = "ADRES",
+                    Description = "DESCRIPTION",
+                };
 
-            var basketItem = new List<BasketItem>
+                var basketItem = new List<BasketItem>
             {
                 new BasketItem
                 {
@@ -70,85 +72,99 @@ namespace WinBind.Infrastructure.Services
                 }
             };
 
-            var checkoutPaymentRequest = new CreateCheckoutFormInitializeRequest()
-            {
-                Locale = Locale.TR.ToString(),
-                ConversationId = Guid.NewGuid().ToString(),
-                Currency = Currency.TRY.ToString(),
-                Price = request.Price.ToString("F2", CultureInfo.InvariantCulture),
-                PaidPrice = request.Price.ToString("F2", CultureInfo.InvariantCulture),
-                BasketId = request.BasketId.ToString(),
-                Buyer = buyer,
-                BasketItems = basketItem,
-                BillingAddress = address,
-                ShippingAddress = address,
-                PaymentGroup = PaymentGroup.PRODUCT.ToString(),  // Ürün satın alımı için yapılan ödeme.
-                EnabledInstallments = new List<int> { 1 },      // Taksitsiz işlem
-                CallbackUrl = "http://localhost:5173/tez-frontend/verify-payment",  // Callback URL		
-                                                                                 //ForceThreeDS = 1,		
-                PaymentSource = "123123",
-                PosOrderId = "asdasd13",
-            };
-
-            var paymentCF = await CheckoutFormInitialize.Create(checkoutPaymentRequest, options);
-
-            if (paymentCF.Status == "success")
-            {
-                return new InitializePaymentResponseDto
+                var checkoutPaymentRequest = new CreateCheckoutFormInitializeRequest()
                 {
-                    IsSuccess = true,
-                    IyzicoToken = paymentCF.Token,
-                    IyzicoCheckoutFormContent = paymentCF.CheckoutFormContent,
-                    Message = paymentCF.ErrorMessage,
+                    Locale = Locale.TR.ToString(),
+                    ConversationId = Guid.NewGuid().ToString(),
+                    Currency = Currency.TRY.ToString(),
+                    Price = request.Price.ToString("F2", CultureInfo.InvariantCulture),
+                    PaidPrice = request.Price.ToString("F2", CultureInfo.InvariantCulture),
+                    BasketId = request.BasketId.ToString(),
+                    Buyer = buyer,
+                    BasketItems = basketItem,
+                    BillingAddress = address,
+                    ShippingAddress = address,
+                    PaymentGroup = PaymentGroup.PRODUCT.ToString(),  // Ürün satın alımı için yapılan ödeme.
+                    EnabledInstallments = new List<int> { 1 },      // Taksitsiz işlem
+                    CallbackUrl = "http://localhost:5173/tez-frontend/verify-payment",  // Callback URL		
+                                                                                        //ForceThreeDS = 1,		
+                    PaymentSource = "123123",
+                    PosOrderId = "asdasd13",
                 };
-            }
-            else
-            {
-                return new InitializePaymentResponseDto
+
+                var paymentCF = await CheckoutFormInitialize.Create(checkoutPaymentRequest, options);
+
+                if (paymentCF.Status == "success")
                 {
-                    IsSuccess = false,
-                    Message = $"Ödeme işlemi başarısız. Hata : {paymentCF.ErrorGroup} ++++++ {paymentCF.ErrorMessage} ",
-                };
+                    return new InitializePaymentResponseDto
+                    {
+                        IsSuccess = true,
+                        IyzicoToken = paymentCF.Token,
+                        IyzicoCheckoutFormContent = paymentCF.CheckoutFormContent,
+                        Message = paymentCF.ErrorMessage,
+                    };
+                }
+                else
+                {
+                    return new InitializePaymentResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = $"Ödeme işlemi başarısız. Hata : {paymentCF.ErrorGroup} ++++++ {paymentCF.ErrorMessage} ",
+                    };
+                }
             }
+            catch (Exception ex)
+            {
+                throw new Exception($"ProcessPaymentAsync error : {ex.Message}");
+            }
+
         }
 
         public async Task<VerifyPaymentResponseDto> VerifyPaymentAsync(VerifyPaymentCommandRequest request)
         {
-            var retrieveCFrequest = new RetrieveCheckoutFormRequest
+            try
             {
-                Token = request.IyzicoToken,
-            };
-
-            var checkoutForm = CheckoutForm.Retrieve(retrieveCFrequest, options);
-
-            if (checkoutForm.Result.PaymentStatus == "SUCCESS")
-            {
-                // Ödeme başarılı
-                return new VerifyPaymentResponseDto
+                var retrieveCFrequest = new RetrieveCheckoutFormRequest
                 {
-                    PaymentId = Guid.Parse(checkoutForm.Result.PaymentId),
-                    OrderId = request.OrderId,
-                    PaymentStatus = checkoutForm.Result.PaymentStatus,
-                    Amount = checkoutForm.Result.PaidPrice,
-                    PaymentDate = DateTime.Now,
-                    PaymentMethod = "Credit Card",
-                    ErrorMessage = null
+                    Token = request.IyzicoToken,
                 };
-            }
-            else
-            {
-                // Ödeme başarısız
-                return new VerifyPaymentResponseDto
+
+                var checkoutForm = CheckoutForm.Retrieve(retrieveCFrequest, options);
+
+                if (checkoutForm.Result.PaymentStatus == "SUCCESS")
                 {
-                    PaymentId = Guid.Parse(checkoutForm.Result.PaymentId),
-                    OrderId = request.OrderId,
-                    PaymentStatus = checkoutForm.Result.PaymentStatus,
-                    Amount = checkoutForm.Result.PaidPrice,
-                    PaymentDate = DateTime.Now,
-                    PaymentMethod = "Credit Card",
-                    ErrorMessage = checkoutForm.Result.ErrorMessage
-                };
+                    // Ödeme başarılı
+                    return new VerifyPaymentResponseDto
+                    {
+                        PaymentId = Guid.Parse(checkoutForm.Result.PaymentId),
+                        OrderId = request.OrderId,
+                        PaymentStatus = checkoutForm.Result.PaymentStatus,
+                        Amount = checkoutForm.Result.PaidPrice,
+                        PaymentDate = DateTime.Now,
+                        PaymentMethod = "Credit Card",
+                        ErrorMessage = null
+                    };
+                }
+                else
+                {
+                    // Ödeme başarısız
+                    return new VerifyPaymentResponseDto
+                    {
+                        PaymentId = Guid.Parse(checkoutForm.Result.PaymentId),
+                        OrderId = request.OrderId,
+                        PaymentStatus = checkoutForm.Result.PaymentStatus,
+                        Amount = checkoutForm.Result.PaidPrice,
+                        PaymentDate = DateTime.Now,
+                        PaymentMethod = "Credit Card",
+                        ErrorMessage = checkoutForm.Result.ErrorMessage
+                    };
+                }
             }
+            catch (Exception ex)
+            {
+                throw new Exception($"VerifyPaymentAsync method: {ex.Message}");
+            }
+
         }
     }
 }

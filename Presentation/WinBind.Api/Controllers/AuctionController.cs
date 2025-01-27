@@ -100,6 +100,7 @@ namespace WinBind.Api.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet("get-auctions-by-userId")]
         public async Task<IActionResult> GetAuctionsByUserId([FromHeader] Guid userId)
         {

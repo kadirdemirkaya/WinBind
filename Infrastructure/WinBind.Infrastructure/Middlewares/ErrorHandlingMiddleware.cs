@@ -36,8 +36,8 @@ namespace WinBind.Infrastructure.Middlewares
             var errorResponse = new
             {
                 StatusCode = context.Response.StatusCode,
-                Message = "An unexpected error occurred. Please try again later.",
-                Detailed = exception.Message 
+                Message = $"An unexpected error occurred. Please try again later",
+                Detailed = exception.Message
             };
 
             return context.Response.WriteAsJsonAsync(errorResponse);
