@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Bcpg;
 using WinBind.Application.Abstractions;
 using WinBind.Application.Features.Commands.Requests;
 using WinBind.Application.Features.Queries.Requests;
@@ -81,6 +82,7 @@ namespace WinBind.Api.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [AllowAnonymous]
         [Route("get-all-active-auctions")]
         public async Task<IActionResult> GetAllActiveAuctions()
         {
@@ -109,6 +111,17 @@ namespace WinBind.Api.Controllers
             return Ok(response);
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("get-auction-by-id")]
+        public async Task<IActionResult> GetAuctionById([FromHeader]Guid actionId)
+        {
+            GetAuctionByIdQueryRequest getAuctionByIdQueryRequest = new(actionId);
+            ResponseModel<ActiveAuctionModel> responseModel = await _mediator.Send(getAuctionByIdQueryRequest);
+
+            return Ok(responseModel);
+        }
+
         /// <summary>
         /// Kullanıcının katıldığı ve teklif verdiği müzayedeleri vermekte
         /// </summary>
@@ -131,7 +144,7 @@ namespace WinBind.Api.Controllers
         /// <returns></returns>
         [HttpDelete]
         [Route("delete-auction")]
-        public async Task<IActionResult> DeleteAuction([FromHeader]Guid auctionId)
+        public async Task<IActionResult> DeleteAuction([FromHeader] Guid auctionId)
         {
             DeleteAuctionCommandRequest deleteAuctionCommandRequest = new(auctionId);
             ResponseModel<bool> responseModel = await _mediator.Send(deleteAuctionCommandRequest);

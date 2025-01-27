@@ -15,6 +15,7 @@ namespace WinBind.Application.Features.Queries.Handlers
         {
             List<Auction> auctions = await _auctionRepo.GetAllAsync(
                 a => a.Bids.Any(b => b.UserId == request.UserId) &&
+                a.AuctionStatus == Domain.Enums.AuctionStatus.Continues ||
                 a.AuctionStatus == Domain.Enums.AuctionStatus.End &&
                 a.IsDeleted == false,
                 false,

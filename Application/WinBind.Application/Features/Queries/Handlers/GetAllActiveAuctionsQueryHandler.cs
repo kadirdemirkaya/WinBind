@@ -14,11 +14,12 @@ namespace WinBind.Application.Features.Queries.Handlers
         {
             List<Auction> auctions = await _repository.GetAllAsync(
                 a => a.IsDeleted == false &&
-                a.Product.IsAuctionProduct == true && 
-                a.AuctionStatus == Domain.Enums.AuctionStatus.Continues, 
-                false, 
-                a => a.Product, 
-                p => p.Product.ProductImages);
+                a.Product.IsAuctionProduct == true &&
+                a.AuctionStatus == Domain.Enums.AuctionStatus.Continues,
+                false,
+                a => a.Product,
+                p => p.Product.ProductImages,
+                a => a.Bids);
 
             List<ActiveAuctionModel> activeAuctions = auctions.Select(a => new ActiveAuctionModel
             {
@@ -27,6 +28,7 @@ namespace WinBind.Application.Features.Queries.Handlers
                 StartDate = a.StartDate,
                 StartingPrice = a.StartingPrice,
                 UserId = a.AppUserId,
+                CurrentPrice = a.Bids.Count > 0 ? a.Bids.Max(b => b.BidAmount) : a.StartingPrice,
                 ProductDto = new()
                 {
                     BandColor = a.Product.BandColor,

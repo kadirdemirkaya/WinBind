@@ -7,7 +7,7 @@ using WinBind.Domain.Models.Responses;
 
 namespace WinBind.Application.Features.Commands.Handlers
 {
-    public class BidOnAuctionCommandHandler(IRepository<Bid> _bidRepo, IAuctionService _auctionService) : IRequestHandler<BidOnAuctionCommandRequest, ResponseModel<bool>>
+    public class BidOnAuctionCommandHandler(IRepository<Bid> _bidRepo, IRepository<Auction> _auctionRepo, IAuctionService _auctionService) : IRequestHandler<BidOnAuctionCommandRequest, ResponseModel<bool>>
     {
         public async Task<ResponseModel<bool>> Handle(BidOnAuctionCommandRequest request, CancellationToken cancellationToken)
         {
@@ -47,29 +47,34 @@ namespace WinBind.Application.Features.Commands.Handlers
             }
             else
             {
-                Bid newBid = new()
+                Auction? auction = await _auctionRepo.GetAsync(a => a.Id == request.BidOnAuctionDto.AuctionId && a.IsDeleted == false);
+                
+                if (auction is not null && auction.StartingPrice < request.BidOnAuctionDto.BidAmount)
                 {
-                    AuctionId = request.BidOnAuctionDto.AuctionId,
-                    UserId = request.BidOnAuctionDto.UserId,
-                    BidAmount = request.BidOnAuctionDto.BidAmount,
-                    BidDate = DateTime.UtcNow,
-                    CreatedAtUtc = DateTime.UtcNow,
-                };
-
-                if (await _bidRepo.AddAsync(newBid))
-                    if (await _bidRepo.SaveChangesAsync())
+                    Bid newBid = new()
                     {
-                        BidOnAuctionModel bidOnAuctionModel = new()
+                        AuctionId = request.BidOnAuctionDto.AuctionId,
+                        UserId = request.BidOnAuctionDto.UserId,
+                        BidAmount = request.BidOnAuctionDto.BidAmount,
+                        BidDate = DateTime.UtcNow,
+                        CreatedAtUtc = DateTime.UtcNow,
+                    };
+
+                    if (await _bidRepo.AddAsync(newBid))
+                        if (await _bidRepo.SaveChangesAsync())
                         {
-                            AuctionId = request.BidOnAuctionDto.AuctionId,
-                            BidAmount = request.BidOnAuctionDto.BidAmount,
-                            UserId = request.BidOnAuctionDto.UserId,
-                        };
+                            BidOnAuctionModel bidOnAuctionModel = new()
+                            {
+                                AuctionId = request.BidOnAuctionDto.AuctionId,
+                                BidAmount = request.BidOnAuctionDto.BidAmount,
+                                UserId = request.BidOnAuctionDto.UserId,
+                            };
 
-                        await _auctionService.SendLastBidAtAuctionAsync(bidOnAuctionModel);
+                            await _auctionService.SendLastBidAtAuctionAsync(bidOnAuctionModel);
 
-                        return new ResponseModel<bool>(true);
-                    }
+                            return new ResponseModel<bool>(true);
+                        }
+                } 
 
                 return new ResponseModel<bool>("Bid could not be created", 400);
             }
