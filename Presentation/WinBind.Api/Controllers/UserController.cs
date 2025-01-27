@@ -44,8 +44,18 @@ namespace WinBind.Api.Controllers
 
             if (responseModel.Success is false)
                 return BadRequest(responseModel);
+            else
+            {
+                var sendEmailCommand = new SendEmailCommandRequest
+                {
+                    ToEmail = userRegisterCommandRequest.Email,
+                    EmailType = Domain.Enums.EmailType.Registration,
+                    UserFirstName = userRegisterCommandRequest.Name
+                };
 
-            return Ok(responseModel);
+                await _mediator.Send(sendEmailCommand);
+                return Ok(responseModel);
+            }
         }
 
         /// <summary>

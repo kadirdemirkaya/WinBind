@@ -1,12 +1,11 @@
-﻿using MimeKit;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MailKit.Net.Smtp;
+using MimeKit;
+using Org.BouncyCastle.Ocsp;
 using WinBind.Application.Abstractions;
+using WinBind.Application.Features.Commands.Requests;
+using WinBind.Domain.Enums;
 using WinBind.Domain.Models.Options;
+
 
 namespace WinBind.Infrastructure.Services
 {
@@ -18,21 +17,40 @@ namespace WinBind.Infrastructure.Services
             _smtpOptions = smtpOptions;
         }
 
-        public async Task SendEmailAsync(string toEmail, string subject, string body)
+        public async Task SendEmailAsync(SendEmailCommandRequest request)
         {
-            //var message = new MimeMessage();
-            //message.From.Add(new MailboxAddress("Celebi Seyehat", _smtpOptions.User));
-            //message.To.Add(new MailboxAddress("", toEmail));
-            //message.Subject = subject;
+            string subject = string.Empty;
+            string body = string.Empty;
 
-            //var bodyBuilder = new BodyBuilder { HtmlBody = body };
-            //message.Body = bodyBuilder.ToMessageBody();
+            switch (request.EmailType)
+            {
+                case EmailType.Registration:
+                    subject = "Kayıt Başarılı";
+                    body = $"Merhaba {request.UserFirstName}, hesabınız başarıyla oluşturuldu!";
+                    break;
 
-            //using var client = new SmtpClient();
-            //await client.ConnectAsync(_smtpOptions.Server, _smtpOptions.Port, SecureSocketOptions.StartTls);
-            //await client.AuthenticateAsync(_smtpOptions.User, _smtpOptions.Pass);
-            //await client.SendAsync(message);
-            //await client.DisconnectAsync(true);
+                case EmailType.Purchase:
+                    subject = "Satın Alma Başarılı";
+                    body = $"Satın aldığınız {request.PurchasedProductName} için teşekkürler. İyi günler dileriz.";
+                    break;
+
+                default:
+                    throw new ArgumentException("Geçersiz e-posta türü.");
+            }
+
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("Celebi Seyehat", _smtpOptions.User));
+            message.To.Add(new MailboxAddress("", request.ToEmail));
+            message.Subject = subject;
+
+            var bodyBuilder = new BodyBuilder { HtmlBody = body };
+            message.Body = bodyBuilder.ToMessageBody();
+
+            using var client = new SmtpClient();
+            await client.ConnectAsync(_smtpOptions.Server, _smtpOptions.Port, MailKit.Security.SecureSocketOptions.StartTls);
+            await client.AuthenticateAsync(_smtpOptions.User, _smtpOptions.Pass);
+            await client.SendAsync(message);
+            await client.DisconnectAsync(true);
         }
     }
 }
