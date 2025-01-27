@@ -71,9 +71,20 @@ namespace WinBind.Api.Controllers
                 });
             }
 
-            return BadRequest(new
+            var createPaymentCommand2 = new CreatePaymentCommandRequest
             {
-                ErrorMessage = result.ErrorMessage,
+                PaymentId = result.PaymentId,
+                OrderId = result.OrderId,
+                Amount = decimal.Parse(result.Amount),
+                PaymentDate = result.PaymentDate,
+                PaymentMethod = result.PaymentMethod
+            };
+
+            var createPaymentResult2 = await _mediator.Send(createPaymentCommand2);
+            return Ok(new
+            {
+                Payment = result,
+                CreatePayment = createPaymentResult2
             });
         }
 
