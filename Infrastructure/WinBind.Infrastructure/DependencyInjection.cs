@@ -23,6 +23,7 @@ namespace WinBind.Infrastructure
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPaymentService, IyzicoPaymentService>();
             services.AddScoped<IPaginationService, PaginationService>();
+            services.AddScoped<IEmailService, EmailService>();
 
             services.AddScoped<IAuctionService, AuctionService>();
             services.AddScoped<AuctionHub>();

@@ -56,7 +56,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.ApplicationServiceRegistration();
 
-builder.Services.InfrastructureServiceRegistration();
+builder.Services.InfrastructureServiceRegistration(builder.Configuration);
 
 builder.Services.PersistenceServiceRegistration(builder.Configuration);
 

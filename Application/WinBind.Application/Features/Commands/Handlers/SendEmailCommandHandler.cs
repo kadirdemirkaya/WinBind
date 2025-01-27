@@ -23,7 +23,7 @@ namespace WinBind.Application.Features.Commands.Handlers
             if (request == null)
                 return new ResponseModel<bool>("Email sent failed. Request cant be null.", 400);
 
-            await _emailService.SendEmailAsync(request.ToEmail, request.Subject, request.Body);
+            await _emailService.SendEmailAsync(request);
             return new ResponseModel<bool>("Mail send successfuly.", 200);
         }
     }
