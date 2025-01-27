@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WinBind.Application.Features.Commands.Requests;
 
 namespace WinBind.Api.Controllers
 {
@@ -19,26 +20,17 @@ namespace WinBind.Api.Controllers
         }
 
 
-        //[HttpPost("SendEmail")]
-        //public async Task<IActionResult> SendEmail(SendEmailCommand command)
-        //{
-        //    await _mediator.Send(command);
+        [HttpPost("SendEmail")]
+        public async Task<IActionResult> SendEmail(SendEmailCommandRequest command)
+        {
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-        //    var query = new GetCustomerIdByEmailQuery()
-        //    {
-        //        Email = command.ToEmail
-        //    };
-        //    var queryResponse = await _mediator.Send(query);
+            var result = await _mediator.Send(command);
+            if(result.Success is false)
+                return BadRequest(ModelState);
 
-        //    var notfyCommand = new AddNotificationCommand()
-        //    {
-        //        CustomerId = queryResponse.Id,
-        //        Type = "Kayıt İşlemi",
-        //        Message = "Kayıt işleminiz başarıyla gerçekleşmiştir."
-        //    };
-        //    await _mediator.Send(notfyCommand);
-
-        //    return Ok("Email başarıyla gönderildi.");
-        //}
+            return Ok("Email başarıyla gönderildi.");   
+        }
     }
 }

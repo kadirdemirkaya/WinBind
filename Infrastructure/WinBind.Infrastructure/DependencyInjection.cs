@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -15,7 +16,7 @@ namespace WinBind.Infrastructure
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection InfrastructureServiceRegistration(this IServiceCollection services)
+        public static IServiceCollection InfrastructureServiceRegistration(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddSignalR();
 
@@ -51,6 +52,10 @@ namespace WinBind.Infrastructure
 
             services.AddAuthorization();
 
+            var smtpOptions = new SmtpOptions();
+            configuration.GetSection("SmtpOptions").Bind(smtpOptions);
+            services.AddSingleton(smtpOptions);
+            
             return services;
         }
 
