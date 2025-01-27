@@ -11,5 +11,6 @@ namespace WinBind.Domain.Models.Auction
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public decimal StartingPrice { get; set; }
+        public decimal CurrentPrice { get; set; }
     }
 }
