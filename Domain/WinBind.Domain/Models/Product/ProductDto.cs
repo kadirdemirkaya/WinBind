@@ -24,6 +24,7 @@ namespace WinBind.Domain.Models.Product
         public string Technology { get; set; }
         public bool IsAvailable { get; set; }
         public int StockCount { get; set; }
+        public bool IsAuctionProduct { get; set; }
         public List<ProductImageDto> ProductImages { get; set; }
 
         public Guid UserId { get; set; }

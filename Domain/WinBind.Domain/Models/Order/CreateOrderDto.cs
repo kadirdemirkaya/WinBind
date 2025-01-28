@@ -6,5 +6,7 @@ namespace WinBind.Domain.Models.Order
     {
         public Guid? UserId { get; set; }
         public List<CreateBasketItemDto> CreateBasketItemDtos { get; set; }
+        public bool IsAuctionProductOrder { get; set; }
+        public Guid? AuctionId { get; set; }
     }
 }

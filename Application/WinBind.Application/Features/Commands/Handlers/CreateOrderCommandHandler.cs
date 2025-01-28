@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using WinBind.Application.Abstractions;
 using WinBind.Application.Features.Commands.Requests;
 using WinBind.Domain.Entities;
@@ -8,7 +9,7 @@ using WinBind.Domain.Models.Responses;
 
 namespace WinBind.Application.Features.Commands.Handlers
 {
-    public class CreateOrderCommandHandler(IRepository<Basket> _basketRepository, IRepository<Order> _orderRepository, IRepository<Product> _productRepository, IMapper _mapper) : IRequestHandler<CreateOrderCommandRequest, ResponseModel<CreateOrderModel>>
+    public class CreateOrderCommandHandler(IRepository<Basket> _basketRepository, IRepository<Order> _orderRepository, IRepository<Product> _productRepository, IRepository<Auction> _auctionRepository, IMapper _mapper) : IRequestHandler<CreateOrderCommandRequest, ResponseModel<CreateOrderModel>>
     {
         public async Task<ResponseModel<CreateOrderModel>> Handle(CreateOrderCommandRequest request, CancellationToken cancellationToken)
         {
@@ -35,11 +36,20 @@ namespace WinBind.Application.Features.Commands.Handlers
                     {
                         Product product = await _productRepository.GetAsync(p => p.Id == basketItemDto.ProductId && p.IsDeleted == false);
 
-                        totalAmount += product.Price * basketItemDto.Quantity;
+                        Auction auction = await _auctionRepository.Table.Where(a => a.Id == request.CreateOrderDto.AuctionId).Include(a => a.AuctionResult).ThenInclude(ar => ar.WinningBidDetails).FirstOrDefaultAsync();
+
+                        if (request.CreateOrderDto.IsAuctionProductOrder)
+                        {
+                            totalAmount += auction.AuctionResult.FinalPrice * basketItemDto.Quantity;
+                        }
+                        else
+                        {
+                            totalAmount += product.Price * basketItemDto.Quantity;
+                        }
 
                         if (i == 0)
                         {
-                            if (product.StockCount > basketItemDto.Quantity)
+                            if (product.StockCount >= basketItemDto.Quantity)
                             {
                                 product.StockCount -= basketItemDto.Quantity;
                                 _productRepository.Update(product);
@@ -60,6 +70,7 @@ namespace WinBind.Application.Features.Commands.Handlers
 
                     Order order = new()
                     {
+                        Id = Guid.NewGuid(),
                         OrderDate = DateTime.UtcNow,
                         TotalAmount = totalAmount,
                         UserId = request.CreateOrderDto.UserId ?? Guid.Empty,

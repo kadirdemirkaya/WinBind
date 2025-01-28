@@ -52,7 +52,8 @@ namespace WinBind.Application.Features.Queries.Handlers
                     SKU = auction.Product.SKU,
                     StockCount = auction.Product.StockCount,
                     Technology = auction.Product.Technology,
-                    UserId = auction.Product.UserId
+                    UserId = auction.Product.UserId,
+                    IsAuctionProduct = auction.Product.IsAuctionProduct,
                 }
             };
 
