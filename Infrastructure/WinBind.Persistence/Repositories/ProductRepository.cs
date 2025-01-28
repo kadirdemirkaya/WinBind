@@ -26,7 +26,7 @@ namespace WinBind.Persistence.Repositories
 
             var query = _context.Products.AsQueryable();
 
-            query = query.Where(p => p.IsAvailable == true && p.IsDeleted == false);
+            query = query.Where(p => p.IsAvailable == true && p.IsDeleted == false && p.IsAuctionProduct == false); 
 
             if (!string.IsNullOrEmpty(request.Brand))
                 query = query.Where(p => p.Brand == request.Brand);
